@@ -1,13 +1,19 @@
 package com.boiseitoncall.utilities.testing;
 
-
+import com.github.lalyos.jfiglet.FigletFont;
 import com.boiseitoncall.utilities.testing.models.TestSuite;
 import com.boiseitoncall.utilities.testing.models.TestAspect;
+import com.boiseitoncall.utilities.testing.models.TestSuiteBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class TestCaseGenerator {
     /**
@@ -83,9 +89,17 @@ public class TestCaseGenerator {
         String[] tmpPAdates = new String[] {"current dated", "future dated"};
         */
         Scanner scanner = new Scanner(System.in);
+        //String asciiArt= "";
+        try {
+            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
+            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
+            System.out.println(FigletFont.convertOneLine("Test"));
+            System.out.println(FigletFont.convertOneLine("Case"));
+            System.out.println(FigletFont.convertOneLine("Generator"));
+        }catch(Exception e) {
+            }
         
-        
-        System.out.print("Test Case Generator.\nEnter the number of test Aspects to be tested: ");
+        System.out.print("Enter the number of different Aspects to be tested: ");
         // get their input as a String
         String numAspectsString = scanner.next();
         int numberOfAspects = 0;
@@ -104,19 +118,21 @@ public class TestCaseGenerator {
             //we have a valid number of aspects
             //create the new testSuite object
             TestSuite testSuite = new TestSuite();
-            
+            TestSuiteBuilder testBuilder = new TestSuiteBuilder();
             
             for (int i = 1 ; i<= numberOfAspects ; i++)
             {
                 //System.out.println("\tDEBUG: Inside: ComputeTestCases Aspects Loop...");
-                
-                
-                fillInAspect(testSuite, scanner);
-                
+                try { System.out.println(FigletFont.convertOneLine("Aspect    #" + i)); } catch(Exception e) {}
 
 
-            }
+                //fillInAspect(testSuite, scanner);
+                //fillInAspect(testSuite, i);
+                testSuite.addAnAspect(Builder.getTestAspectCmdLine());
+                
             
+            }
+
         }
 
         return null;
@@ -130,55 +146,73 @@ public class TestCaseGenerator {
      * @param suite
      * @param scanner 
      */
-    public static void fillInAspect(TestSuite suite, Scanner scanner)
+    //public static void fillInAspect(TestSuite suite, Scanner scanner)
+    public static void fillInAspect(TestSuite suite, int number)
     {
-        
-        String aspectName = "";
-        String aspectDescription = "";
+        System.out.println("DEBUG: in fillInAspect method call.");
+        String aspectName = new String("");
+        //String aspectDescription = new String("");
         int aspectNumberOfOptions = 0;
-        List<String> aspectOptions = null;
+        List<String> aspectOptions = new ArrayList();
+        TestAspect newAspect = new TestAspect();
+        
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader console = new BufferedReader(isr);
         
         
         //enter a name
         if (aspectName.isEmpty())
         {
-            System.out.print("Enter the name of the Aspect. Hit Enter when done:");
-            aspectName = scanner.next();
+            System.out.print("Enter test aspect " +number + "'s NAME: ");
+            //aspectName = scanner.next();
+            try { aspectName = console.readLine().toString(); } catch(Exception e) {};
+            newAspect.setName(aspectName);
         }
         
-          
+        /* BROKEN will just use name for the description for now.
         //enter a description
         if (aspectDescription.isEmpty())
         {
-            System.out.print("Enter the name of the Aspect. Hit Enter when done:");
+            System.out.print("\tEnter the test Aspect DESCRIPTION. Hit Enter when done:");
             aspectDescription = scanner.next();
+            newAspect.setDescription(aspectDescription);
         }
+        */
+        //aspectDescription = aspectName;
+        newAspect.setDescription(aspectName);
         
         
         if (aspectNumberOfOptions < 1 );
         {
-            System.out.print("Enter the number of different options for \"" +aspectName 
-                    +"\".  Hit Enter when done.");
+            System.out.print("\tEnter the NUMBER of different options for Aspect " +number + " \"" +aspectName 
+                    +"\"");
             try {
-            aspectNumberOfOptions = Integer.parseInt(scanner.next());
+            //try { aspectName = console.readLine(); } catch(Exception e) {};
+
+            //aspectNumberOfOptions = Integer.parseInt(scanner.next());
+                aspectNumberOfOptions = Integer.parseInt(console.readLine().toString());
             } catch(NumberFormatException e)
             {
                 System.out.println("ERROR: Non number submitted for 'Number of Options' for aspect \"" 
                         +aspectName +"\"" + aspectNumberOfOptions);
-            }
+            } catch (Exception e) { }
             
             //if we have a number and it is larger than 0, then fill in that number of Aspect options
             if (aspectNumberOfOptions > 0)
             {
-                TestAspect aspect = new TestAspect(aspectName, aspectDescription);
+                newAspect.setNumberOfOptions(aspectNumberOfOptions);
+                
                 for (int i = 0; i < aspectNumberOfOptions ; i ++)
                 {
-                    String newOption = null;
+                    String newOption = new String("");
                     try {
-                        newOption = scanner.next();
+                        System.out.print("\tOption #" + i + "'s name: ");
+                        //newOption = scanner.next();
+                        newOption = console.readLine().toString();
+                        aspectOptions.add(newOption);
                     } catch(Exception e)
                     {
-                    System.out.println("ERROR: Problem reading the option: \"" + newOption + "\".\nESCEPTION:" + e);
+                    System.out.println("ERROR: Problem reading the option: \"" + newOption + "\".\nEXCEPTION:" + e);
                     }
                 }
                 
@@ -190,7 +224,10 @@ public class TestCaseGenerator {
                 aspectNumberOfOptions = 0;
             }// end loop to get Options entered
         }//end entry of Options.
-        
+
+        //now that we have filled in all the info for a TestAspect, add it to the TestSuite
+        suite.addAnAspect(newAspect);
+
   
         
         

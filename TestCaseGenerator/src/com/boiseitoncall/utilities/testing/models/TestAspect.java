@@ -41,13 +41,26 @@ public class TestAspect {
 
     
     /**
-     * Almost complete constructor.
+     * Half complete constructor.
      * @param name
      * @param description 
      */
     public TestAspect(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    
+    /**
+     * 3/4 complete constructor.
+     * @param name
+     * @param description 
+     * @param numOfOptions
+     */
+    public TestAspect(String name, String description, int numOfOptions) {
+        this.name = name;
+        this.description = description;
+        this.numberOfOptions = numOfOptions;
     }
 
 

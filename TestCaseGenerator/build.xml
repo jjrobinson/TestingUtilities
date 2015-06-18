@@ -70,4 +70,26 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+
+
+
+
+    
+    
+    <target depends="jar" name="runJar" >
+        <java classname="com.boiseitoncall.utilities.testing.TestCaseGenerator">
+            <classpath>
+                <pathelement location="dist/TestCaseGenerator.jar"/>
+                <pathelement path="${java.class.path}"/>
+         </classpath>
+        </java>
+    </target>
+
+
+
+
+
+    
+    
 </project>
