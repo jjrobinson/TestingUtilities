@@ -1,18 +1,12 @@
 package com.boiseitoncall.utilities.testing;
 
-import com.github.lalyos.jfiglet.FigletFont;
-import com.boiseitoncall.utilities.testing.models.TestSuite;
 import com.boiseitoncall.utilities.testing.models.TestAspect;
+import com.boiseitoncall.utilities.testing.models.TestSuite;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
 
 public class TestCaseGenerator {
     /**
@@ -120,7 +114,9 @@ public class TestCaseGenerator {
             //create the new testSuite object
             TestSuite testSuite = new TestSuite();
             
-            testBuilder.
+            TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
+			
+			BobTheBuilder.createTestSuiteCmdLine(testSuite, numberOfAspects);
 
         }
 

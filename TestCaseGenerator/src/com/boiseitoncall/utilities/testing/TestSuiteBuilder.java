@@ -1,7 +1,8 @@
 package com.boiseitoncall.utilities.testing;
 
-import com.github.lalyos.jfiglet.FigletFont;
 import com.boiseitoncall.utilities.testing.models.TestAspect;
+import com.boiseitoncall.utilities.testing.models.TestSuite;
+import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -12,6 +13,25 @@ import java.io.InputStreamReader;
  * @author Jason Robinson
  */
 public class TestSuiteBuilder {
+	private String type;
+	
+	/**
+	 * Stores what type of a TestSuite the Builder is creating. Not an enum (yet) TODO
+	 * @param newType String
+	 */
+	public void setBuilderType(String newType) {
+		this.type = newType;
+	}
+	
+	/**
+	 * Returns what type of a TestSuite the builder is using
+	 * @return 
+	 */
+	public String getBuilderType(){
+		return this.type;
+	}
+	
+	
     /**
      * Prompts user via command line for the properties of the TestAspect
      * @return TestAspect
@@ -30,7 +50,8 @@ public class TestSuiteBuilder {
     }
     
     
-    public boolean createTestSuiteCmdLine(int numberOfTestAspects) {
+    public boolean createTestSuiteCmdLine(TestSuite suite, int numberOfTestAspects) {
+		
         for (int i = 1 ; i<= numberOfTestAspects ; i++)
         {
             //System.out.println("\tDEBUG: Inside: ComputeTestCases Aspects Loop...");
@@ -39,7 +60,7 @@ public class TestSuiteBuilder {
 
             //fillInAspect(testSuite, scanner);
             //fillInAspect(testSuite, i);
-            testSuite.addAnAspect(testBuilder.getTestAspectCmdLine());
+            suite.addAnAspect(getTestAspectCmdLine());
 
 
         }
