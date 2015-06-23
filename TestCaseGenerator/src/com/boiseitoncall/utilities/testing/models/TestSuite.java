@@ -114,7 +114,8 @@ public class TestSuite {
     }
 
     /**
-     * Sets the TestSuite's Aspects list to the provided List TestAspects
+     * Sets the TestSuite's Aspects list to the provided List TestAspects. 
+     * Resets the counter for the number of aspects to the size of the list passed in.
      * @param aspects List<TestAspect>
      */
     public void setAspects(List<TestAspect> aspects) {
@@ -127,26 +128,39 @@ public class TestSuite {
      * @return 
      */
     public List<String> getTestCases() {
+        //TODO
         return testCases;
     }
 
     /**
-     * Sets the TestSuite's TestCase list to the provided List String
+     * Sets the TestSuite's TestCase list to the provided List String.
+     * Should not be used.  This is a troubleshooting method only.
      * @param testCases  List<String>
      */
     public void setTestCases(List<String> testCases) {
         this.testCases = testCases;
     }
     
+    
     /**
-     * Adds a TestAspect to the TestSuite
-     * 
-     * @param newAspect <TestAspect>
+     * Adds a TestAspect to the TestSuite AND increments the Aspect counter
+     * @param newAspect TestAspect
      */
-    public void addAspect(TestAspect newAspect){
-        this.aspects.add(newAspect);
+    public void addAspect(TestAspect newAspect)
+    {
+        if(newAspect != null)
+        {
+            this.aspects.add(newAspect);
+            this.numTestAspects++;
+            
+        }
+        
     }
     
+    /**
+     * Gets the names of all TestAspects in the TestSuite
+     * @return 
+     */
     public List<String> getAspectNames(){
         List aspectNames = new ArrayList<>();
         Iterator<TestAspect> i = aspects.listIterator();
@@ -164,27 +178,6 @@ public class TestSuite {
         return numTestAspects;
     }
 
-    /**
-     * Sets the number of TestAspects for this testSuite
-     * @param numTestAspects 
-     */
-    public void setNumTestAspects(int numTestAspects) {
-        this.numTestAspects = numTestAspects;
-    }
 
-    
-    /**
-     * Adds a testAspect to the TestSuite
-     * @param newAspect TestAspect
-     */
-    public void addAnAspect(TestAspect newAspect)
-    {
-        if(newAspect != null)
-        {
-            this.aspects.add(newAspect);
-            this.numTestAspects++;
-            
-        }
-        
-    }
+
 }

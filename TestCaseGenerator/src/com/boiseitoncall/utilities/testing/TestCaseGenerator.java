@@ -19,7 +19,8 @@ public class TestCaseGenerator {
         public static ArrayList<String> prior_auth_variations = new ArrayList<String>();
 */
   
-    
+    public static TestSuite testSuite;
+
     public static void main(String[] args) {
         ArrayList<String> procedures = new ArrayList<String>();
         ArrayList<String> plan_variations = new ArrayList<String>();
@@ -85,41 +86,13 @@ public class TestCaseGenerator {
         BufferedReader console = new BufferedReader(isr);
 
         
-        TestSuiteBuilder testBuilder = new TestSuiteBuilder();
+        TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
+              
+        BobTheBuilder.DisplayBannerCmdLine();
         
-        testBuilder.DisplayBannerCmdLine();
+        testSuite = BobTheBuilder.createTestSuiteCmdLine(console);
         
-        //initial prompt to get number of TestAspects
-        System.out.print("Enter the number of different Aspects to be tested: ");
-        // get their input as a String
-        String numAspectsString = new String();
-
-        int numberOfAspects = 0;
-        try {
-            numAspectsString = console.readLine();
-            numberOfAspects = Integer.parseInt(numAspectsString);
-        } catch(NumberFormatException e)
-        {
-            System.out.println("ERROR: Non number submitted for 'Number of Aspects': \"" + numAspectsString + "\"");
-        }catch(IOException e) {
-            System.out.println("ERROR: Could not read from standard input / console.");
-        }
         
-        if (numberOfAspects < 1)
-        {
-            System.out.println("ERROR: Must supply a positive number of 1 or larger.");
-            System.exit(1);
-        } else {
-            //we have a valid number of aspects
-            //create the new testSuite object
-            TestSuite testSuite = new TestSuite();
-            
-            TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
-			
-			BobTheBuilder.createTestSuiteCmdLine(testSuite, numberOfAspects);
-
-        }
-
         return null;
     } // end input method
     
