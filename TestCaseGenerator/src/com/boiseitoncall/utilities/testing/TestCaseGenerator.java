@@ -3,7 +3,6 @@ package com.boiseitoncall.utilities.testing;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.boiseitoncall.utilities.testing.models.TestSuite;
 import com.boiseitoncall.utilities.testing.models.TestAspect;
-import com.boiseitoncall.utilities.testing.models.TestSuiteBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -88,50 +87,40 @@ public class TestCaseGenerator {
         String[] tmpMMCPstatus = new String[] {"Prospective MMCP", "MMCP","Non-MMCP"};
         String[] tmpPAdates = new String[] {"current dated", "future dated"};
         */
-        Scanner scanner = new Scanner(System.in);
-        //String asciiArt= "";
-        try {
-            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
-            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
-            System.out.println(FigletFont.convertOneLine("Test"));
-            System.out.println(FigletFont.convertOneLine("Case"));
-            System.out.println(FigletFont.convertOneLine("Generator"));
-        }catch(Exception e) {
-            }
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader console = new BufferedReader(isr);
+
         
+        TestSuiteBuilder testBuilder = new TestSuiteBuilder();
+        
+        testBuilder.DisplayBannerCmdLine();
+        
+        //initial prompt to get number of TestAspects
         System.out.print("Enter the number of different Aspects to be tested: ");
         // get their input as a String
-        String numAspectsString = scanner.next();
+        String numAspectsString = new String();
+
         int numberOfAspects = 0;
         try {
+            numAspectsString = console.readLine();
             numberOfAspects = Integer.parseInt(numAspectsString);
         } catch(NumberFormatException e)
         {
-            System.out.println("ERROR: Non number submitted for 'Number of Aspects': " + numAspectsString);
+            System.out.println("ERROR: Non number submitted for 'Number of Aspects': \"" + numAspectsString + "\"");
+        }catch(IOException e) {
+            System.out.println("ERROR: Could not read from standard input / console.");
         }
         
         if (numberOfAspects < 1)
         {
-            System.out.println("ERROR: Must supply a number of 1 or larger");
+            System.out.println("ERROR: Must supply a positive number of 1 or larger.");
             System.exit(1);
         } else {
             //we have a valid number of aspects
             //create the new testSuite object
             TestSuite testSuite = new TestSuite();
-            TestSuiteBuilder testBuilder = new TestSuiteBuilder();
             
-            for (int i = 1 ; i<= numberOfAspects ; i++)
-            {
-                //System.out.println("\tDEBUG: Inside: ComputeTestCases Aspects Loop...");
-                try { System.out.println(FigletFont.convertOneLine("Aspect    #" + i)); } catch(Exception e) {}
-
-
-                //fillInAspect(testSuite, scanner);
-                //fillInAspect(testSuite, i);
-                testSuite.addAnAspect(Builder.getTestAspectCmdLine());
-                
-            
-            }
+            testBuilder.
 
         }
 
