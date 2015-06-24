@@ -145,26 +145,30 @@ public class TestAspect {
         this.numberOfOptions = 0;
     }
 
-	@Override public String toString() {
-		StringBuilder result = new StringBuilder();
-		
-		String NEW_LINE = System.getProperty("line.separator");
-		
-		result.append(this.getClass().getName() + " Object {" + NEW_LINE);
-		result.append("Aspect Name: " +this.getName() + NEW_LINE);
-		//result.append("Aspect Description: " +this.getName() + NEW_LINE);
-		result.append("Number of Options: " +this.getNumberOfOptions() + NEW_LINE);
-		result.append("Option Names: ");
-		List options = new ArrayList(getOptions());
-		for (int i = 0 ; i < options.size() ; i++) {
-			result.append("\"" + options.get(i).toString() + "\", ");
-		}
-		
-		
-		result.append(NEW_LINE + "}");
-		
-		return result.toString(); //To change body of generated methods, choose Tools | Templates.
-	}
-	
+
+    /**
+     * Overrides the default ToString behavior. system agnostic newline
+     * @return 
+     */
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        String NEW_LINE = System.getProperty("line.separator");
+
+        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
+        result.append("Aspect Name: " +this.getName() + NEW_LINE);
+        //result.append("Aspect Description: " +this.getName() + NEW_LINE);
+        result.append("Number of Options: " +this.getNumberOfOptions() + NEW_LINE);
+        result.append("Option Names: ");
+        List options = new ArrayList(getOptions());
+        for (int i = 0 ; i < options.size() ; i++) {
+                result.append("\"" + options.get(i).toString() + "\", ");
+        }
+
+
+        result.append(NEW_LINE + "}");
+
+        return result.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
 	
 }

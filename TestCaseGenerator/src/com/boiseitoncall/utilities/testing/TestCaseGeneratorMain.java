@@ -1,11 +1,12 @@
 package com.boiseitoncall.utilities.testing;
 
+import com.boiseitoncall.utilities.testing.models.TestAspect;
 import com.boiseitoncall.utilities.testing.models.TestSuite;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestCaseGenerator {
+public class TestCaseGeneratorMain {
     /**
      * @param args the command line arguments
      */
@@ -17,22 +18,25 @@ public class TestCaseGenerator {
 */
   
     public static TestSuite testSuite;
+    private static String NEW_LINE = System.getProperty("line.separator");
 
     public static void main(String[] args) {
+        
+        /*
         ArrayList<String> procedures = new ArrayList<String>();
         ArrayList<String> plan_variations = new ArrayList<String>();
         ArrayList<String> mmcp_participation_variations = new ArrayList<String>();
         ArrayList<String> prior_auth_types = new ArrayList<String>();
-      
+      */
         printUsage();
         
         //Call to function to get all user input
-        TestSuite input = getInput();
+        testSuite = getInput();
         
         
         //call function to iterate and create the test cases
         //using generic Object instead of List<String>
-        input.getAllTestCases();
+        testSuite.getAllTestCases();
         //ComputeTestCases(input);
 
         //print to screen all the test cases
@@ -50,7 +54,7 @@ public class TestCaseGenerator {
     public static void printUsage(){
         System.out.println("Test Case Generator.");
         System.out.println("Example: To test 2D CGI shapes we have 1) border color "
-				+ "2) Number of Sides 3) fill color .... \nWhich is 3 different aspects.");
+				+ "2) Number of Sides 3) fill color .... " + NEW_LINE + "Which is 3 different aspects.");
         System.out.println("For our 3 Aspects:");
         System.out.println("\tAspect #1 Options (Border Color): black, brown, blue = "
 				+ "3 different border colors.");
@@ -59,7 +63,7 @@ public class TestCaseGenerator {
         System.out.println("\tAspect #1 Options (Fill Colors): red, green, yellow = "
 				+ "3 different fill colors.");
         System.out.println("\tTotal Test Cases: #BorderColors x #Sides x #FillColors "
-				+ "= 3 x 3 x 3 = 27\n");
+				+ "= 3 x 3 x 3 = 27" + NEW_LINE + "");
     }
     
     
@@ -87,89 +91,71 @@ public class TestCaseGenerator {
         
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
-		BobTheBuilder.DisplayBannerCmdLine();
-        
-		//fill in all the aspects
+        BobTheBuilder.DisplayBannerCmdLine();
+
+        //fill in all the aspects
         testSuite = BobTheBuilder.createTestSuiteCmdLine();
-        
-		//List testCases = new ArrayList(ComputeTestCases(testSuite));
-        
-		
-		System.out.println("\n" + testSuite.toString());
-		
-		System.out.println("TestSuite Name: " + testSuite.getName());
-		System.out.println("TestSuite Description: " + testSuite.getDescription());
-		System.out.println("TestSuite Number Of Aspects: " + testSuite.getNumTestAspects());
-		System.out.println("TestSuite Aspect Names: ");
-		for(String name : testSuite.getAspectNames()){
-			System.out.println("\t" + name);
-			
-		}
-		
+
+        //List testCases = new ArrayList(ComputeTestCases(testSuite));
+
+        //System.out.println("" + NEW_LINE + "" + testSuite.toString());
+        System.out.println("DEBUG: Inside TestSuiteBuilder:createTestSuiteCmdLine()");
+        System.out.println("TestSuite Name: " + testSuite.getName());
+        System.out.println("TestSuite Description: " + testSuite.getDescription());
+        System.out.println("TestSuite Number Of Aspects: " + testSuite.getNumTestAspects());
+        System.out.println("TestSuite Aspects: ");
+        for(TestAspect aspect : testSuite.getAspects()){
+            System.out.print("\t" + aspect.getName() + " : {");
+            for(String option : aspect.getOptions()) {
+                System.out.print("\"" + option + "\" ");
+                }
+            System.out.print("}" + NEW_LINE + "");
+        }
+	
+       
 		
 		
         return testSuite;
     } // end input method
     
 
-  
-    
-    
     /**
-     * Takes the user input and generates the output test cases
+     * Hard coded example
      */
-    public static List<String> ComputeTestCases(List<List> inputs) {
-        int testCaseNumber = 0;
-        List testCases = new ArrayList();
-        System.out.println("\tDEBUG: Inside: ComputeTestCases...");
-        
-        List currentInput = inputs.remove(1);
-        
-        for (int i =0; i < currentInput.size(); i++){
-            testCaseNumber++;
-            System.out.println("\tTestCase #" + testCaseNumber + ": \"" + currentInput.get(i) + "\"");
-        }
-        return testCases;
-        } //end function
-	
-	
-	/**
-	 * Hard coded example
-	 */
-	public static void HardCodedVersion() {
-	    
-		List hardCodedMasterList = new ArrayList<>();
+    public static void HardCodedVersion() {
 
-		List<String> VariableA = new ArrayList<String>(Arrays.asList("A","B","D","D","E"));
-		List<String> VariableB = new ArrayList<String>(Arrays.asList("14", "15", "17", "41", "42", "43", "51", "52", "54", "56", "83", "85"));
-		List<String> VariableC = new ArrayList<String>(Arrays.asList("Prospective", "Member","Non-Member"));
-		List<String> VariableD =  new ArrayList<String>(Arrays.asList("current dated", "future dated"));
+        List hardCodedMasterList = new ArrayList<>();
+
+        List<String> VariableA = new ArrayList<String>(Arrays.asList("A","B","D","D","E"));
+        List<String> VariableB = new ArrayList<String>(Arrays.asList("14", "15", "17", "41", "42", "43", "51", "52", "54", "56", "83", "85"));
+        List<String> VariableC = new ArrayList<String>(Arrays.asList("Prospective", "Member","Non-Member"));
+        List<String> VariableD =  new ArrayList<String>(Arrays.asList("current dated", "future dated"));
 
 //		List<String> allCombinations = new ArrayList<String>();
-		List<List<String>> allCombinations = new ArrayList<List<String>>();
+        List<List<String>> allCombinations = new ArrayList<List<String>>();
 
-		int numberOfCombinations = 0;
+        int numberOfCombinations = 0;
 
-		for(int i = 0 ; i < VariableA.size() ; i++) {
-			for(int j = 0 ; i < VariableB.size() ; j++) {
-				for(int k = 0 ; i < VariableC.size() ; k++) {
-					for(int l = 0 ; i < VariableD.size() ; l++) {
-						numberOfCombinations++;
-						String newTestCase = new String("TestCase #" +numberOfCombinations 
-								+ ": Procedure: " + VariableA.get(i) + " Rate: " 
-								+ VariableB.get(j) + " Status: " + VariableC.get(k)
-								+ " Date: " + VariableD.get(l));
-						System.out.println(newTestCase);
-						//allCombinations.add(newTestCase);
-		} } } }
+        for(int i = 0 ; i < VariableA.size() ; i++) {
+            for(int j = 0 ; i < VariableB.size() ; j++) {
+                for(int k = 0 ; i < VariableC.size() ; k++) {
+                    for(int l = 0 ; i < VariableD.size() ; l++) {
+                        numberOfCombinations++;
+                        String newTestCase = new String("TestCase #" +numberOfCombinations 
+                            + ": Procedure: " + VariableA.get(i) + " Rate: " 
+                            + VariableB.get(j) + " Status: " + VariableC.get(k)
+                            + " Date: " + VariableD.get(l));
+                        System.out.println(newTestCase);
+                        //allCombinations.add(newTestCase);
+        } } } }
 
-		hardCodedMasterList.addAll(VariableA);
-		hardCodedMasterList.addAll(VariableB);
-		hardCodedMasterList.addAll(VariableC);
-		hardCodedMasterList.addAll(VariableD);
-	
-	
-	} // end of hard coded method
+        hardCodedMasterList.addAll(VariableA);
+        hardCodedMasterList.addAll(VariableB);
+        hardCodedMasterList.addAll(VariableC);
+        hardCodedMasterList.addAll(VariableD);
+
+
+    } // end of hard coded method
 	
 	
 	

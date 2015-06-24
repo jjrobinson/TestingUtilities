@@ -1,5 +1,6 @@
 package com.boiseitoncall.utilities.testing;
 
+import static com.boiseitoncall.utilities.testing.TestCaseGeneratorMain.testSuite;
 import com.boiseitoncall.utilities.testing.models.TestAspect;
 import com.boiseitoncall.utilities.testing.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
@@ -17,7 +18,7 @@ import java.util.List;
 public class TestSuiteBuilder {
 	private String builderType;
         private TestSuite suite;
-	
+	private static String NEW_LINE = System.getProperty("line.separator");
 	/**
 	 * Stores what type of a TestSuite the Builder is creating. Not an enum (yet) TODO
 	 * @param newType String
@@ -44,7 +45,8 @@ public class TestSuiteBuilder {
      * @return 
      */
     public TestSuite createTestSuiteCmdLine() {
-		InputStreamReader isr = new InputStreamReader(System.in);
+        this.builderType = "command line";
+        InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader console = new BufferedReader(isr);
 		
         suite = new TestSuite();
@@ -84,6 +86,7 @@ public class TestSuiteBuilder {
             suite.addAspect(getTestAspectCmdLine(console, i));
         }
         return suite;
+        
     }// end of createTestSuite
     
 
@@ -154,7 +157,7 @@ public class TestSuiteBuilder {
                         aspectOptions.add(newOption);
                     } catch(Exception e)
                     {
-                    System.out.println("ERROR: Problem reading the option: \"" + newOption + "\".\nEXCEPTION:" + e);
+                    System.out.println("ERROR: Problem reading the option: \"" + newOption + "\"." + NEW_LINE + "EXCEPTION:" + e);
                     }
                 }
                 
@@ -166,6 +169,9 @@ public class TestSuiteBuilder {
                 aspectNumberOfOptions = 0;
             }// end loop to get Options entered
         }//end entry of Options.
+        
+        newAspect.setOptions(aspectOptions);
+        
         return newAspect;
     }
     
@@ -180,8 +186,8 @@ public class TestSuiteBuilder {
     static void DisplayBannerCmdLine() {
                 //String asciiArt= "";
         try {
-            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
-            //asciiArt = FigletFont.convertOneLine("Test\nCase\nGenerator");
+            //asciiArt = FigletFont.convertOneLine("Test" + NEW_LINE + "Case" + NEW_LINE + "Generator");
+            //asciiArt = FigletFont.convertOneLine("Test" + NEW_LINE + "Case" + NEW_LINE + "Generator");
             System.out.println(FigletFont.convertOneLine("Test"));
             System.out.println(FigletFont.convertOneLine("Case"));
             System.out.println(FigletFont.convertOneLine("Generator"));

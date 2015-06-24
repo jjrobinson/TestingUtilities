@@ -128,21 +128,33 @@ public class TestSuite {
      * @return 
      */
     public List<String> getAllTestCases() {
-        //List<List<String>> allCombinations = new ArrayList<ArrayList<String>>();
-		List multiArray = new ArrayList<List>();
-		//StringBuilder sb = new StringBuilder();
-		
-		for (int i = 0 ; i < numTestAspects ; i ++) {
-			multiArray.add(i, aspects.get(i).getOptions());
-			}
-		
-		//call for each of the TestAspects in the TestSuite
-		List<String> output = getAllTestCasesRecursiveHelper(new String(), aspects);
-		
-		
-		
-		
-        return output;
+        this.testCases = null;
+        List<List<String>> arrayOfArrays = new ArrayList<>();
+        
+        List indexTracker = new ArrayList();
+        
+        //build the simple list of lists
+        
+        for (int i = 0; i < this.numTestAspects ; i++) {
+            arrayOfArrays.add(i, aspects.get(i).getOptions());
+        }
+        
+        System.out.println("DEBUG: List of Lists: ToString(): " +arrayOfArrays.toString());
+        
+        
+        
+        
+        //now fill in aspects into a plain 2D String array
+        
+        String[][] inputSets = fillIn2Darray();
+        
+        System.out.println("DEBUG: Plain String[][] array: " + inputSets.toString());
+        
+        
+        //recursive call
+        getAllTestCasesRecursiveHelper(inputSets, indexTracker, 0, this.testCases);
+        
+        return this.testCases;
     }
 
 	/**
@@ -150,36 +162,52 @@ public class TestSuite {
 	 * @param smallerList
 	 * @return 
 	 */
-	private static List getAllTestCasesRecursiveHelper(String string, Iterable<?> list){
-		List<?> testCases = new ArrayList<String>();
-		int i = 0;
-	    
-		for(Object item : list) {
-			if(item instanceof Iterable) {
-				getAllTestCasesRecursiveHelper(string + i, (Iterable<?>) item);
-		} else {
-				System.out.println(String.format("%s%d %s", string, i, item));
-			}
-			i++;
-		
-//		for (int i = 0; i < n; i++) {
-//        if (iterable.get(i) instanceof String) {
-//            sb.append(string).append(i).append(" ").append(iterable.get(i)).append("\n");
-//            // or Version 2: 
-//            // sb.append(string + i + " " + l.get(i) + "\n");
-//        } 
-//        if (iterable.get(i) instanceof List) {
-//            dumpList(string + i, (List) iterable.get(i), sb);
-//			}
-//		}
+    private void getAllTestCasesRecursiveHelper(String[][] inputSets, List indexTracker, int currentSet, List results){
+        //for (int i = 0 ; i < inputSets
+        //algorithm here http://programmingpraxis.com/2013/09/06/cartesian-product/
+        
+        for(int i = 0 ; i < inputSets[currentSet].length; i++){
+            indexTracker.set(currentSet, i);
+            if(currentSet == inputSets.length -1){
+                List carteseanSet = new ArrayList<String>();
+                for(int j = 0 ; j <inputSets.length ; j++) {
+                    carteseanSet.set(j, inputSets[j][Integer.parseInt(indexTracker.get(j).toString())]);
+                    
+                }
+            }
+        }
 
-		}
-		return testCases;
-	}
+        
+    }
 	
-	
-	
-	
+	/**
+         * 
+	public class CartesianProductRecursive : ICartesianProduct
+{
+    public int[][] GetProduct(int[][] sets) {
+        var resultSets = new List<int[]> ();
+        var indices = new int[sets.Length];
+        CreateProductSet (sets, indices, 0, resultSets);
+        return resultSets.ToArray();
+    }
+ 
+    private void CreateProductSet(int[][] inputSets, int[] indices, int currentSet, List<int[]> resultSets) {
+        for (int i = 0; i < inputSets[currentSet].Length; i++) {
+            indices [currentSet] = i;
+            if (currentSet == (inputSets.Length - 1)) {
+                var cartesianSet = new int[inputSets.Length];
+                for (int j = 0; j < inputSets.Length; j++) {
+                    cartesianSet[j] = (inputSets[j][indices[j]]);
+                }
+                resultSets.Add (cartesianSet);
+            } else {
+                CreateProductSet (inputSets, indices, currentSet + 1, resultSets);
+            }
+        }
+    }
+}
+	*/
+    
 	
     /**
      * Sets the TestSuite's TestCase list to the provided List String.
@@ -228,24 +256,49 @@ public class TestSuite {
     }
 
 
-	@Override public String toString() {
-		StringBuilder result = new StringBuilder();
-		
-		String NEW_LINE = System.getProperty("line.separator");
-		
-		result.append(this.getClass().getName() + " Object {" + NEW_LINE);
-		result.append("TestSuite Name: " +this.getName() + NEW_LINE);
-		result.append("TestSuite Description: " +this.getName() + NEW_LINE);
-		result.append("Number of TestAspects: " +this.getNumTestAspects() + NEW_LINE);
-		result.append("TestAspects: " +NEW_LINE);
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
 
-		for (int i = 0 ; i < aspects.size() ; i++) {
-			result.append("\"" + aspects.get(i).toString() + "\", ");
-		}
-		
-		result.append(NEW_LINE + "}");
-		
-		return result.toString(); //To change body of generated methods, choose Tools | Templates.
-	}
+        String NEW_LINE = System.getProperty("line.separator");
 
+        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
+        result.append("TestSuite Name: " +this.getName() + NEW_LINE);
+        result.append("TestSuite Description: " +this.getName() + NEW_LINE);
+        result.append("Number of TestAspects: " +this.getNumTestAspects() + NEW_LINE);
+        result.append("TestAspects: " +NEW_LINE);
+
+        for (int i = 0 ; i < aspects.size() ; i++) {
+            result.append("\"" + aspects.get(i).toString() + "\", ");
+        }
+
+        result.append(NEW_LINE + "}");
+
+        return result.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+    private int findLargestOptionDimension() {
+        int maxSize = 0;
+        for(int i = 0; i<aspects.size(); i++) {
+            int aspectSize = aspects.get(i).getNumberOfOptions();
+            if (aspectSize > maxSize) {
+            maxSize = aspectSize; }
+        }
+    return maxSize;
+    }
+    
+    private String[][] fillIn2Darray()
+    {
+        int maxSize = findLargestOptionDimension();
+        String[][] results = new String[aspects.size()][maxSize];
+        
+        for (int i=0; i < aspects.size();i++){
+            for (int j=0; j < aspects.get(i).getOptions().size() ; j++){
+                results[i][j] = aspects.get(i).getOptions().get(j);
+            }
+        }
+        return results;
+    }
+    
+    
 }
