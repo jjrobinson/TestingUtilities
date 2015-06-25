@@ -1,6 +1,7 @@
 package com.boiseitoncall.utilities.testing;
 
 import com.boiseitoncall.utilities.testing.models.TestAspect;
+import com.boiseitoncall.utilities.testing.models.TestCase;
 import com.boiseitoncall.utilities.testing.models.TestSuite;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,17 +37,26 @@ public class TestCaseGeneratorMain {
         
         //call function to iterate and create the test cases
         //using generic Object instead of List<String>
-        testSuite.getAllTestCases();
+        printTestCases(testSuite.getAllTestCases());
         //ComputeTestCases(input);
 
         //print to screen all the test cases
         //Object has a toString() so we don't need to specify that this is actually string object.
-
         
-        
+        for (TestCase tc : testSuite.getAllTestCases()) {
+            System.out.println("Test Case #" + tc.getTestNumber() + tc.getTestOptions().toString());
+        }
         
     }//end main(Args)
 
+    
+    public static void printTestCases(List<TestCase> allTestCases){
+        System.out.println("Printing All Possible Test Cases.");
+        for(int i = 0 ; i < allTestCases.size(); i++) {
+            System.out.println("Test Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
+        }
+    }
+    
 
     /**
      *Prints a usage statement at the top of each run.
