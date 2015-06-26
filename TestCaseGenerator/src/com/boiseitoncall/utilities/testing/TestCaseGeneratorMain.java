@@ -8,19 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TestCaseGeneratorMain {
-    /**
-     * @param args the command line arguments
-     */
-/*
-        public static ArrayList<String> procedures = new ArrayList<String>();
-        public static ArrayList<String> plan_variations = new ArrayList<String>();
-        public static ArrayList<String> mmcp_participation_variations = new ArrayList<String>();
-        public static ArrayList<String> prior_auth_variations = new ArrayList<String>();
-*/
-  
+
     public static TestSuite testSuite;
     private static String NEW_LINE = System.getProperty("line.separator");
 
+    /**
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         
         /*
@@ -34,18 +28,21 @@ public class TestCaseGeneratorMain {
         //Call to function to get all user input
         testSuite = getInput();
         
-        
-        //call function to iterate and create the test cases
-        //using generic Object instead of List<String>
-        printTestCases(testSuite.getAllTestCases());
-        //ComputeTestCases(input);
 
         //print to screen all the test cases
         //Object has a toString() so we don't need to specify that this is actually string object.
-        
-        for (TestCase tc : testSuite.getAllTestCases()) {
-            System.out.println("Test Case #" + tc.getTestNumber() + tc.getTestOptions().toString());
+        System.out.println("Total Test Cases: " + testSuite.getNumTestAspects());
+        ArrayList<ArrayList<String>> testCases = testSuite.getTestCases();
+        for (int i = 0 ; i < testCases.size() ; i++) {
+            System.out.println("Test Case #" + i + ": " + testCases.get(i).toString());
         }
+        
+        
+        
+        /*
+        for (ArrayList testCase : testSuite.getTestCases()) {
+            System.out.println("Test Case #" + testCase.index + testCase.getTestOptions().toString());
+        }*/
         
     }//end main(Args)
 
@@ -136,7 +133,15 @@ public class TestCaseGeneratorMain {
 
         List hardCodedMasterList = new ArrayList<>();
 
-        List<String> VariableA = new ArrayList<String>(Arrays.asList("A","B","D","D","E"));
+        /*
+        "H2000", "H2011", "H2011 HM", "H2032", "97537"
+        "14", "15", "17", "41", "42", "43", "51", "52", "54", "56", "83", "85"
+        "Prospective", "Member","Non-Member"
+        "current dated", "future dated"
+        */
+        
+        
+        List<String> VariableA = new ArrayList<String>(Arrays.asList("H2000", "H2011", "H2011 HM", "H2032", "97537"));
         List<String> VariableB = new ArrayList<String>(Arrays.asList("14", "15", "17", "41", "42", "43", "51", "52", "54", "56", "83", "85"));
         List<String> VariableC = new ArrayList<String>(Arrays.asList("Prospective", "Member","Non-Member"));
         List<String> VariableD =  new ArrayList<String>(Arrays.asList("current dated", "future dated"));

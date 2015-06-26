@@ -16,26 +16,9 @@ import java.util.List;
  * @author Jason Robinson
  */
 public class TestSuiteBuilder {
-	private String builderType;
-        private TestSuite suite;
-	private static String NEW_LINE = System.getProperty("line.separator");
-	/**
-	 * Stores what type of a TestSuite the Builder is creating. Not an enum (yet) TODO
-	 * @param newType String
-	 */
-	public void setBuilderType(String newType) {
-		this.builderType = newType;
-	}
-	
-	/**
-	 * Returns what interface the builder is using to create the TestSuite.
-         * Currently only supports command line
-	 * @return 
-	 */
-	public String getBuilderType(){
-		return this.builderType;
-	}
-	
+    private String builderType;
+    private TestSuite suite;
+    private static String NEW_LINE = System.getProperty("line.separator");
     /**
      * The main method of this class (not to be confused with main(String args[]).
      * Call this method to create a new TestSuite via the command line.
@@ -57,7 +40,7 @@ public class TestSuiteBuilder {
 			System.out.print("Enter the Name of this TestSuite: ");
             suite.setName(console.readLine());
 			System.out.print("Enter the Description of this TestSuite: ");
-            suite.setDesc(console.readLine());
+            suite.setDescription(console.readLine());
 		} catch(Exception e) {}
 		
 		
@@ -173,17 +156,23 @@ public class TestSuiteBuilder {
         newAspect.setOptions(aspectOptions);
         
         return newAspect;
-    }
+    } ////////////// end of getTestAspectCmdLine //////////////////////////////////// 
     
     
-    
+    /**
+     * Simple is numeric type check
+     * @param input
+     * @return 
+     */
     public boolean checkForNumber(String input) {
         return input.matches("[0-9]+");
         
     }
 
-    
-    static void DisplayBannerCmdLine() {
+    /**
+     * Displays a giant banner to make reading easier
+     */
+    public void DisplayBannerCmdLine() {
                 //String asciiArt= "";
         try {
             //asciiArt = FigletFont.convertOneLine("Test" + NEW_LINE + "Case" + NEW_LINE + "Generator");
@@ -194,6 +183,26 @@ public class TestSuiteBuilder {
         }catch(Exception e) {
             }
     }
+
+    /**
+     * Stores what type of a TestSuite the Builder is creating.
+     * Just a String field for now. 
+     * TODO implement as an enum?
+     * @param newType String
+     */
+    public void setBuilderType(String newType) {
+            this.builderType = newType;
+    }
+
+    /**
+     * Returns what interface the builder is using to create the TestSuite.
+     * Currently only supports command line
+     * @return 
+     */
+    public String getBuilderType(){
+            return this.builderType;
+    }
+
     
 }//end of class
     
