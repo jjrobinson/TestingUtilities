@@ -70,28 +70,31 @@ public class TestInterfaceFile {
         {
             // no arguments provided
             printUsageStatement();
-            System.exit(0);
+            System.exit(1);
+            //normal non-zero exit status so automation will see this as a failed run
+        } else {
+        
+            //call to process the arguments
+            processArgs(args);
+
+            InterfaceRuleBuilder bobTheBuilder = new InterfaceRuleBuilder();
+
+
+            InterfaceFileRuleInterface rules = bobTheBuilder.getInterfaceFileRules(fileType, state);
+            //test to see if the file exists at the path given
+            //and is not a directory
+            if(fileHandle.exists() && !fileHandle.isDirectory()) {
+                //stuff the file name and lines into a CandidateFile
+                candidate = buildCandidateFile();
+            }
+            
+            //now that we have a candidate, it is time to test it against the 
+            //appropriate set of rules
+            rules.checkForProblems(candidate);
+            
         }
-        
-        //call to process the arguments
-        processArgs(args);
-        
-        InterfaceRuleBuilder bobTheBuilder = new InterfaceRuleBuilder();
-        
-        
-        InterfaceFileRuleInterface rules = bobTheBuilder.getInterfaceFileRules(fileType, state);
-        //test to see if the file exists at the path given
-        //and is not a directory
-        if(fileHandle.exists() && !fileHandle.isDirectory()) {
-            candidate = buildCandidateFile();
-        }
-
-
-
-
-        
-        
-        
+        //normal zero exit status so automation will see this as a successful run
+        System.exit(0);
     } // end of main (String args[])
 
     /**
@@ -199,7 +202,8 @@ public class TestInterfaceFile {
      * @return 
      */
     private static List<String> ParseFile()    {
-        List<String> lines = new ArrayList();
+
+        List<String> inputFileLines = new ArrayList<String>();
         try { buffer = new BufferedReader(new FileReader(fileName)); 
         String line;
         //loop on the input file
@@ -208,8 +212,8 @@ public class TestInterfaceFile {
             // Process line of input Here
             if (!line.isEmpty()) {
                 
-                System.out.println("DEBUG: " + line);
-                lines.add(line);
+                //System.out.println("DEBUG: " + line);
+                inputFileLines.add(line);
                 }// end of file IO loop
             //close our buffered reader
             
@@ -224,7 +228,7 @@ public class TestInterfaceFile {
 
         
 
-        return lines;
+        return inputFileLines;
 //        } catch (Exception e) {
 //            String msg = "Could not open fileName: \"" + fileName + "\".";
 //            errors.add(msg);

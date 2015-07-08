@@ -12,10 +12,45 @@ import java.util.List;
  *
  * @author Jason Robinson
  */
-public class CandidateInterfaceFile {
+public class CandidateInterfaceFile implements InterfaceFileInterface {
     private String fileName;
     private List<String> lines;
     private int numberOfLines;
+    private String interfaceFileType;
+    private String headerLine;
+    private boolean hasHeaderLine;
+
+    public boolean hasHeaderLine() {
+        return hasHeaderLine;
+    }
+
+    public void setHasHeaderLine(boolean hasHeaderLine) {
+        this.hasHeaderLine = hasHeaderLine;
+    }
+
+    public String getInterfaceFileType() {
+        return interfaceFileType;
+    }
+
+    public void setInterfaceFileType(String interfaceFileType) {
+        this.interfaceFileType = interfaceFileType;
+    }
+
+    public String getHeaderLine() {
+        return headerLine;
+    }
+
+    public void setHeaderLine(String headerLine) {
+        this.headerLine = headerLine;
+    }
+
+    public String getInterfaceType() {
+        return interfaceFileType;
+    }
+
+    public void setInterfaceType(String fileType) {
+        this.interfaceFileType = fileType;
+    }
 
     public String getFileName() {
         return fileName;

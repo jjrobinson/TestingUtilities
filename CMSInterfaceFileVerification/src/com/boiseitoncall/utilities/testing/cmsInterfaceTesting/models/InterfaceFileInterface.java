@@ -17,8 +17,12 @@ public interface InterfaceFileInterface {
     public String getFileName();
     public String getInterfaceType();
     public List<String> getLines();
-    
+    public String getHeaderLine();
+    public boolean hasHeaderLine();
+
+    public void setHeaderLine(String newHeader);
     public void setFileName(String newFileName);
     public void setLines(List<String> newLines);
+    public void setHasHeaderLine(boolean hasHeader);
     
 }
