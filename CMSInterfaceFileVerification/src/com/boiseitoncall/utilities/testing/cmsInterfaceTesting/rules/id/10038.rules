@@ -1,0 +1,30 @@
+#overall interface properties 
+#new record keyword
+@InterfaceProperties
+#interfaceNumber|header Required|footer required|terminate in newline|
+10038|true|true|true
+
+#   New record keyword: exactly the following: "@NEWRECORD"
+#   #Chars per line: Number of characters in this record's line
+#   Required: is this record required on every 10038 file? boolean
+#       Must be one of: "true", "false"
+#   Position constraints: Where must this line appear in the file?
+#       must be one of: "first", "last", "other"
+#   Duplicates allowed: can there be more than one of this record per file
+#       Must be one of: "true", "false"
+
+@RECORD_PROPERTIES
+#record name, #chars per line,required,position,duplicates
+Buyin A Header|160|true|first|one
+
+@RECORD_FIELDS
+#Field Name|Target Column|Target Table |Source Field Length|Source Field Type - java.util.regex.Pattern string|Enumerated Valid Values|Transformation Rule / Format Guide|Comments
+AGY-HDR-ENV-IDENT-CD RECORD ID|||4|ALPHANUMERIC|"PROD", "TEST"|Always PROD|ENVIRONMENT IDENTIFICATION CODE
+FILLER|||1|ALPHANUMERIC||Space Fill|Space Fill.
+AGY-HDR-CREATION-DT|||8|NUMERIC||CCYYMMDD|Date File was created.
+FILLER|||59|ALPHANUMERIC||Space Fill|Space Fill.
+AGY-HDR-PRM-PYR-CD|||3|ALPHANUMERIC||"S13"|CMS assigned Agency Code
+AGY-HDR-REC-IDENT-CD|||1|ALPHANUMERIC|"H"|Always "H"|HEADER RECORD IDENTIFICATION CODE
+FILLER|||5|ALPHANUMERIC||Space Fill|Space Fill.
+AGY-HDR-BC-DT|||6|NUMERIC||CCYYMM|BILLING CYCLE DATE
+FILLER|||73|ALPHANUMERIC||Space Fill|Space Fill.

@@ -1,0 +1,11 @@
+#   New record keyword: exactly the following: "@NEWRECORD"
+#   #Chars per line: Number of characters in this record's line
+#   Required: is this record required on every 10038 file? boolean
+#       Must be one of: "true", "false"
+#   Position constraints: Where must this line appear in the file?
+#       must be one of: "first", "last", "any"
+#   Duplicates allowed: can there be more than one of this record per file
+#       Must be one of: "one", "many"
+
+#new record keyword, record name, #chars per line,required,position,duplicates
+@NEWRECORD,
