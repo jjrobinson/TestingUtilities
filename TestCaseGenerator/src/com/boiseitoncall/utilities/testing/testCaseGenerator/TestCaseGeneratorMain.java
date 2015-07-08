@@ -1,8 +1,8 @@
-package com.boiseitoncall.utilities.testing;
+package com.boiseitoncall.utilities.testing.testCaseGenerator;
 
-import com.boiseitoncall.utilities.testing.models.TestAspect;
-import com.boiseitoncall.utilities.testing.models.TestCase;
-import com.boiseitoncall.utilities.testing.models.TestSuite;
+import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestAspect;
+import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestCase;
+import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestSuite;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

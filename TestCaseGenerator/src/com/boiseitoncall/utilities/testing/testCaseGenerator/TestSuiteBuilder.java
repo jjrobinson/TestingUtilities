@@ -1,8 +1,8 @@
-package com.boiseitoncall.utilities.testing;
+package com.boiseitoncall.utilities.testing.testCaseGenerator;
 
-import static com.boiseitoncall.utilities.testing.TestCaseGeneratorMain.testSuite;
-import com.boiseitoncall.utilities.testing.models.TestAspect;
-import com.boiseitoncall.utilities.testing.models.TestSuite;
+import static com.boiseitoncall.utilities.testing.testCaseGenerator.TestCaseGeneratorMain.testSuite;
+import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestAspect;
+import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class TestSuiteBuilder {
             newAspect.setName(aspectName);
         }
         
-        /* BROKEN will just use name for the description for now.
+        /* will just use the name only for now.
         //enter a description
         if (aspectDescription.isEmpty())
         {
@@ -107,7 +107,7 @@ public class TestSuiteBuilder {
         }
         */
         //aspectDescription = aspectName;
-        newAspect.setDescription(aspectName);
+        //newAspect.setDescription(aspectName);
         
         
         if (aspectNumberOfOptions < 1 );

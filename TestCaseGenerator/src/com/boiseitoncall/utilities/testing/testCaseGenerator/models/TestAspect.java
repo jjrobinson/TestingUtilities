@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boiseitoncall.utilities.testing.models;
+package com.boiseitoncall.utilities.testing.testCaseGenerator.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TestAspect {
     private String name;
-    private String description;
+    //private String description;
     private int numberOfOptions;
     private List<String> options;
 
@@ -23,22 +23,22 @@ public class TestAspect {
      */
     public TestAspect() {
         name = "";
-        description = "";
+        //description = "";
         numberOfOptions = 0;
         options = new ArrayList<String>();
     }
 
 
-    /**
+    /*
      * Complete constructor.
-     */
+     *
     public TestAspect(String name, String description, int numberOfOptions, List newOptions) {
         this.name = name;
         this.description = description;
         this.numberOfOptions = numberOfOptions;
         options.addAll(newOptions);
     }
-
+    */
     
     /**
      * Half complete constructor.
@@ -47,7 +47,7 @@ public class TestAspect {
      */
     public TestAspect(String name, String description) {
         this.name = name;
-        this.description = description;
+        //this.description = description;
     }
 
     
@@ -59,7 +59,7 @@ public class TestAspect {
      */
     public TestAspect(String name, String description, int numOfOptions) {
         this.name = name;
-        this.description = description;
+        //this.description = description;
         this.numberOfOptions = numOfOptions;
     }
 
@@ -113,22 +113,23 @@ public class TestAspect {
         this.options = options;
     }
 
-    /**
+    /*
      * Returns the aspect's Description
      * @return 
-     */
+     *
     public String getDescription() {
         return description;
     }
-
-    /**
+   
+    /*
      * Sets the aspect's description.
      * @param description 
-     */
+     *
     public void setDescription(String description) {
         this.description = description;
     }    
-
+    */
+    
     /**
      * Adds a new Option to the Aspect and auto-increments the numberOfOptions
      * @param newOption 
