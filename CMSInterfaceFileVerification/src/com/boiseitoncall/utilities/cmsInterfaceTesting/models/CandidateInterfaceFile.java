@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.boiseitoncall.utilities.testing.CMSInterfaceTesting.models;
+package com.boiseitoncall.utilities.cmsInterfaceTesting.models;
 
 import java.util.List;
 

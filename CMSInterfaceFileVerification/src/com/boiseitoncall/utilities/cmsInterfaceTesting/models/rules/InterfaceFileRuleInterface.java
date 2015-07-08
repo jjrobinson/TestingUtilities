@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package com.boiseitoncall.utilities.testing.CMSInterfaceTesting.models.rules;
+package com.boiseitoncall.utilities.cmsInterfaceTesting.models.rules;
 
 
-import com.boiseitoncall.utilities.testing.CMSInterfaceTesting.models.CandidateInterfaceFile;
+import com.boiseitoncall.utilities.cmsInterfaceTesting.models.CandidateInterfaceFile;
 
 import java.util.ArrayList;
 import java.util.List;

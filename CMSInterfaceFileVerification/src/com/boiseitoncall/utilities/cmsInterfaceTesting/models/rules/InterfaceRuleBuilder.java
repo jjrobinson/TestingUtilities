@@ -4,9 +4,12 @@
  * and open the template in the editor.
  */
 
-package com.boiseitoncall.utilities.testing.CMSInterfaceTesting.models.rules;
+package com.boiseitoncall.utilities.cmsInterfaceTesting.models.rules;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * This class gathers the rules needed to assemble a completed rule
@@ -53,6 +56,20 @@ public class InterfaceRuleBuilder {
     
 
     public InterfaceFileRuleInterface getInterfaceFileRules(String interfaceNumber, String state) {
+         
+        
+        
+        
+            
+        //InterfaceRuleBuilder.class.getResource("/utility.properties");
+        try {
+            BufferedReader  bfr = new BufferedReader(new FileReader(new File("config.properties")));
+        } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+        } 
+
+        
         
         //list of supported interfaces
         if (interfaceNumber.equalsIgnoreCase("10038")){
