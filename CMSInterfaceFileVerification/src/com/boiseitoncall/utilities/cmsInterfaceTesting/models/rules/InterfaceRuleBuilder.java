@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * This class gathers the rules needed to assemble a completed rule
@@ -63,8 +64,9 @@ public class InterfaceRuleBuilder {
             
         //InterfaceRuleBuilder.class.getResource("/utility.properties");
         try {
-            BufferedReader  bfr = new BufferedReader(new FileReader(new File("config.properties")));
-        } catch (IOException e) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("")));
+            //BufferedReader  bfr = new BufferedReader(new FileReader(new File("config.properties")));
+        } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
         } 
