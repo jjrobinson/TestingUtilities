@@ -88,6 +88,10 @@ public class TestInterfaceFile {
                 candidate = buildCandidateFile();
             }
             
+            
+            printCandidate();
+            
+            
             //now that we have a candidate, it is time to test it against the 
             //appropriate set of rules
             //rules.checkForProblems(candidate);
@@ -97,6 +101,9 @@ public class TestInterfaceFile {
         System.exit(0);
     } // end of main (String args[])
 
+    
+    
+    
     /**
      * Processes the command line arguments manually. Eventually will be replaced 
      * with args4j.
@@ -290,6 +297,17 @@ public class TestInterfaceFile {
         }
     }
 
+    
+    public static void printCandidate(){
+        System.out.println("Candidate File Name: " + candidate.getFileName());
+        for (int i = 0 ; i < candidate.getLines().size() ; i++){
+            System.out.println("Line " + i + ":\""+candidate.getLines().get(i)+"\"");
+        }
+    }
+    
+    
+    
+    
 }
 
 
