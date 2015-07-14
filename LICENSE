@@ -1,0 +1,27 @@
+This is a learning project that isn't expected to be useful outside of a very very very specific niche.  But just in case......
+
+All source code in this repository is copyright © 2015 Jason Robinson (https://github.com/jjrobinson ). Any additions by additional persons must be noted in the NOTICE file.
+
+GitHub.com Terms Of Service for public repositories require granting the ability to check out and fork this code...
+https://help.github.com/articles/github-terms-of-service/
+
+If you do check-out or fork this code, then lets call this an Apache 2.0 licensed project.  The NOTICE file has attributions notes that need to be maintained.
+
+But you also agree that...
+
+Anyone committing code to this repository agrees that their code may be bundled up and re-released in a proprietary format at any time for any reason by the repository owner(s).  All rights to submitted code are permanently and irrevocably granted to the repository owner(s) to license & sub-license & re-release in any way they see fit.  In other-words: anything in this repository could be yanked and used in a completely proprietary way, for any reason, at any time, with out notice, with out payment, with out attribution, and with out recourse.  Because employers may require that to happen. Who knows.  If you check it in, thanks for helping, but waive good-by.
+
+========================================
+copyright © 2015 Jason Robinson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this software except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
