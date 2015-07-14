@@ -23,18 +23,18 @@ public class TestCaseGeneratorMain {
         ArrayList<String> mmcp_participation_variations = new ArrayList<String>();
         ArrayList<String> prior_auth_types = new ArrayList<String>();
       */
-        printUsage();
+        printUsageCmdLine();
         
         //Call to function to get all user input
-        testSuite = getInput();
+        testSuite = getInputCmdLine();
         
 
         //print to screen all the test cases
-        //Object has a toString() so we don't need to specify that this is actually string object.
-        System.out.println("Total Test Cases: " + testSuite.getNumTestAspects());
-        ArrayList<ArrayList<String>> testCases = testSuite.getTestCases();
+        //Object has a toString() so we don't need to specify that this is actually a string object.
+        System.out.println("Total Test Cases: " + testSuite.getNumberOfTestCases());
+        ArrayList<TestCase> testCases = testSuite.getTestCases();
         for (int i = 0 ; i < testCases.size() ; i++) {
-            System.out.println("Test Case #" + i + ": " + testCases.get(i).toString());
+            System.out.println("Test Case #" + i + ": " + testCases.get(i).getTestOptions().toString());
         }
         
         
@@ -47,7 +47,7 @@ public class TestCaseGeneratorMain {
     }//end main(Args)
 
     
-    public static void printTestCases(List<TestCase> allTestCases){
+    public static void printTestCasesCmdLine(List<TestCase> allTestCases){
         System.out.println("Printing All Possible Test Cases.");
         for(int i = 0 ; i < allTestCases.size(); i++) {
             System.out.println("Test Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
@@ -58,7 +58,7 @@ public class TestCaseGeneratorMain {
     /**
      *Prints a usage statement at the top of each run.
      */
-    public static void printUsage(){
+    public static void printUsageCmdLine(){
         System.out.println("Test Case Generator.");
         System.out.println("Example: To test 2D CGI shapes we have 1) border color "
 				+ "2) Number of Sides 3) fill color .... " + NEW_LINE + "Which is 3 different aspects.");
@@ -81,7 +81,7 @@ public class TestCaseGeneratorMain {
 	 * TestSuite object
      * @return TestSuite
      */
-    public static TestSuite getInput() {
+    public static TestSuite getInputCmdLine() {
         System.out.println("\tDEBUG: Inside: getInput...");
         /*
         ArrayList<String> procedures = new ArrayList<String>();
@@ -118,10 +118,6 @@ public class TestCaseGeneratorMain {
                 }
             System.out.print("}" + NEW_LINE + "");
         }
-	
-       
-		
-		
         return testSuite;
     } // end input method
     
@@ -171,7 +167,4 @@ public class TestCaseGeneratorMain {
 
 
     } // end of hard coded method
-	
-	
-	
 }//end class
