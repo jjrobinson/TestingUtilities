@@ -6,6 +6,7 @@
 
 package com.boiseitoncall.utilities.testing.testCaseGenerator.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,51 +14,51 @@ import java.util.List;
  * @author Jason Robinson
  */
 public class TestCase {
-    private int testNumber;
-    private List<String> testOptions;
+    private ArrayList<String> testOptions;
+    private int numberOfTestOptions;
 
     /**
-     * Default constructor
-     * @param testNumber
+     * Constructor for when you have the testOptions to use
      * @param testOptions 
      */
-    public TestCase(int testNumber, List<String> testOptions) {
-        this.testNumber = testNumber;
+    public TestCase(ArrayList<String> testOptions) {
         this.testOptions = testOptions;
+        this.numberOfTestOptions = testOptions.size();
     }
 
     /**
-     * Returns this test's TestCase #
-     * @return 
+     * Default Constructor
      */
-    public int getTestNumber() {
-        return testNumber;
+    public TestCase() {
+        this.testOptions = new ArrayList<String>();
+        this.numberOfTestOptions = 0;
     }
 
-    /**
-     * Sets this test case's number
-     * @param testNumber 
-     */
-    public void setTestNumber(int testNumber) {
-        this.testNumber = testNumber;
-    }
-
+    
     /**
      * Returns a list of the test variables (strings)
      * @return testOptions List<String>
      */
     public List<String> getTestOptions() {
-        return testOptions;
+        return this.testOptions;
     }
 
     /**
      * Sets the TestCase's list of Options
      * @param testOptions 
      */
-    public void setTestOptions(List<String> testOptions) {
+    public void setTestOptions(ArrayList<String> testOptions) {
         this.testOptions = testOptions;
+        this.numberOfTestOptions = this.testOptions.size();
     }
     
+    public int getNumberOfTestOptions(){
+        return this.numberOfTestOptions;
+    }
     
+    public void addTestOption(String newOption){
+        this.testOptions.add(newOption);
+        this.numberOfTestOptions = this.testOptions.size();
+    }
 
 }
