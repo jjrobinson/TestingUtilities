@@ -1,8 +1,8 @@
-package com.boiseitoncall.utilities.testing.testCaseGenerator;
+package com.boiseitoncall.utilities.testCaseGenerator;
 
-import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestAspect;
-import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestCase;
-import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestSuite;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestCase;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +34,7 @@ public class TestCaseGeneratorMain {
         System.out.println("Total Test Cases: " + testSuite.getNumberOfTestCases());
         ArrayList<TestCase> testCases = testSuite.getTestCases();
         for (int i = 0 ; i < testCases.size() ; i++) {
-            System.out.println("Test Case #" + i + ": " + testCases.get(i).getTestOptions().toString());
+            System.out.println("Test Case #" + (i+1) + ": " + testCases.get(i).getTestOptions().toString());
         }
         
         
@@ -82,7 +82,6 @@ public class TestCaseGeneratorMain {
      * @return TestSuite
      */
     public static TestSuite getInputCmdLine() {
-        System.out.println("\tDEBUG: Inside: getInput...");
         /*
         ArrayList<String> procedures = new ArrayList<String>();
         ArrayList<String> plan_variations = new ArrayList<String>();
@@ -106,7 +105,6 @@ public class TestCaseGeneratorMain {
         //List testCases = new ArrayList(ComputeTestCases(testSuite));
 
         //System.out.println("" + NEW_LINE + "" + testSuite.toString());
-        System.out.println("DEBUG: Inside TestSuiteBuilder:createTestSuiteCmdLine()");
         System.out.println("TestSuite Name: " + testSuite.getName());
         System.out.println("TestSuite Description: " + testSuite.getDescription());
         System.out.println("TestSuite Number Of Aspects: " + testSuite.getNumTestAspects());
