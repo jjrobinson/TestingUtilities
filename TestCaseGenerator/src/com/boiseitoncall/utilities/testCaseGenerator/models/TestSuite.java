@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boiseitoncall.utilities.testing.testCaseGenerator.models;
+package com.boiseitoncall.utilities.testCaseGenerator.models;
 
 
 import java.util.ArrayList;

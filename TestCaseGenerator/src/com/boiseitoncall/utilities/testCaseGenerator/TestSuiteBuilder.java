@@ -1,8 +1,8 @@
-package com.boiseitoncall.utilities.testing.testCaseGenerator;
+package com.boiseitoncall.utilities.testCaseGenerator;
 
-import static com.boiseitoncall.utilities.testing.testCaseGenerator.TestCaseGeneratorMain.testSuite;
-import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestAspect;
-import com.boiseitoncall.utilities.testing.testCaseGenerator.models.TestSuite;
+import static com.boiseitoncall.utilities.testCaseGenerator.TestCaseGeneratorMain.testSuite;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
 import java.io.IOException;
