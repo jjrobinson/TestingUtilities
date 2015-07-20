@@ -82,7 +82,6 @@ public class TestSuiteBuilder {
         String aspectName = new String("");
         //String aspectDescription = new String(""); // removing this for simplicity
         
-        System.out.println("DEBUG: in TestSuiteBuilder.getTestAspectCmdLine() method call.");
         int aspectNumberOfOptions = 0;
         List<String> aspectOptions = new ArrayList();
         
