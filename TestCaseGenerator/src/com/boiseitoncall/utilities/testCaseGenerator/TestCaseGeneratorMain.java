@@ -8,10 +8,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main entry point for running TestGenerator as a jar
+ * @author robinso3
+ */
 public class TestCaseGeneratorMain {
 
-    public static TestSuite testSuite;
-    private static String NEW_LINE = System.getProperty("line.separator");
+    /**
+     * The TestSuite object for the static main(String args[])
+     */
+    static TestSuite testSuite;
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
      * @param args the command line arguments
@@ -30,7 +37,7 @@ public class TestCaseGeneratorMain {
         testSuite = getInputCmdLine();
         
         //call to populate all info from hard coded lists for testing.
-        //testSuite = HardCodedVersion();
+        //testSuite = callHardCodedVersion();
 
         System.out.println("TestSuite.toString(): ");
         System.out.println(testSuite.toString());
@@ -52,7 +59,10 @@ public class TestCaseGeneratorMain {
         
     }//end main(Args)
 
-    
+    /**
+     * Outputs the allTestCases list to the console
+     * @param allTestCases 
+     */
     public static void printTestCasesCmdLine(List<TestCase> allTestCases){
         System.out.println("Printing All Possible Test Cases.");
         for(int i = 0 ; i < allTestCases.size(); i++) {
@@ -90,7 +100,7 @@ public class TestCaseGeneratorMain {
     public static TestSuite getInputCmdLine() {
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
-        BobTheBuilder.DisplayBannerCmdLine();
+        BobTheBuilder.displayBannerCmdLine();
 
         //fill in all the aspects
         testSuite = BobTheBuilder.createTestSuiteCmdLine();
@@ -105,10 +115,8 @@ public class TestCaseGeneratorMain {
      * hard coded method to populate a TestSuite
      * @return TestSuite ts
      */
-    public static TestSuite HardCodedVersion() {
+    public static TestSuite callHardCodedVersion() {
 
-        //list of aspects
-        List hardCodedAspectList = new ArrayList<>();
 
         /*
         Non-Modified: "H2000", "H2032", "97537", "H2011"

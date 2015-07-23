@@ -15,8 +15,9 @@ public class TestOptionGroup {
     private String description;
     private int numberOfOptions;
     private List<String> options;
+    private List<Integer> usesCounter;
 
-    
+
     /**
      * Default constructor. creates an empty TestOptionGroup
      */
@@ -25,16 +26,19 @@ public class TestOptionGroup {
         this.description = "";
         this.numberOfOptions = 0;
         this.options = new ArrayList<String>();
+        this.usesCounter = new ArrayList<Integer>();
     }
     
     /**
-     * Construction where name and description are provided
+     * Constructor where name and description are provided
      * @param newName String
      * @param newDescription String
      */
     public TestOptionGroup(String newName, String newDescription){
         this.name = newName;
         this.description = newDescription;
+        this.options = new ArrayList<String>();
+        this.usesCounter = new ArrayList<Integer>();
     }
 
     /**
@@ -97,15 +101,68 @@ public class TestOptionGroup {
         for(String o : newOptions) {
             addOption(o);
         }
+        setUses(newOptions.size());
     }
     
     /**
-     * Adds a new TestOption
+     * Adds a new TestOption, sets the usesCounter array to 0 for the new option.
      * @param newOption String
      */
     public void addOption(String newOption) {
         this.options.add(newOption);
         this.numberOfOptions = this.options.size();
+        int i = this.options.indexOf(newOption);
+        this.usesCounter.set(i, 0);
     }
 
+
+    /**
+     * returns the usesCounter array
+     * @return 
+     */
+    public List<Integer> getUsesCounter() {
+        return this.usesCounter;
+    }
+    
+    /**
+     * Returns the Option at a given index AND increments the "usesCounter" array for that
+ option
+     * @param index 
+     */
+    public String useOption(int index){
+        //is someoen trying to access an out of bounds address?
+        //HELP not sure how arrayList size works if some addresses are null
+        String option = "";
+        if(this.options.size() > index) {
+            return null;
+        } else { // if not, proceed
+            option = this.options.get(index);
+            if (option != null)
+                this.usesCounter.set(index, (this.usesCounter.get(index)+1));
+            else
+                return null;
+        }
+        return option;
+    }
+    
+    public int getUsesOfOptionAtIndex(int index){
+        if (this.usesCounter != null) {
+            return this.usesCounter.get(index);
+        } else {
+            return 0;
+        }
+    }
+    
+
+    /**
+     * private method to reset all usesCounter of each option to zero
+     *
+     */
+    private void setUses(int size){
+        this.usesCounter = new ArrayList();
+        for(int i=0; i< size ;i++) {
+            this.usesCounter.set(i, 0);
+        }
+    }
+    //*/
 }

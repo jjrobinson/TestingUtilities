@@ -33,6 +33,7 @@ public class TestSuite {
         this.desc = "";
         this.numTestAspects = 0;
         this.allTestCases = new ArrayList<TestCase>();
+        this.smartTestCases = new ArrayList<TestCase>();
         this.aspects = new ArrayList<TestAspect>();
     }
 
@@ -48,6 +49,7 @@ public class TestSuite {
         this.name = name;
         this.desc = desc;
         this.allTestCases = new ArrayList<TestCase>();
+        this.smartTestCases = new ArrayList<TestCase>();
         this.aspects = new ArrayList<TestAspect>();
     }
 
@@ -66,6 +68,7 @@ public class TestSuite {
         this.aspects = newAspects;
         this.numTestAspects = this.aspects.size();
         this.allTestCases = new ArrayList<TestCase>();
+        this.smartTestCases = new ArrayList<TestCase>();
         computeAllTestCases();
         computeSmartTestCases();
     }
@@ -270,37 +273,46 @@ public class TestSuite {
 
         String NEW_LINE = System.getProperty("line.separator");
 
-        result.append("TestSuite Name: \"" +this.getName() + "\"" +NEW_LINE);
-        result.append("TestSuite Description: \"" +this.getDescription() +"\"" +NEW_LINE);
-        result.append("Number of TestAspects: \"" +this.getNumTestAspects() +"\"" +NEW_LINE);
-        result.append("TestAspects: " +NEW_LINE + "{");
+        result.append("TestSuite Name: \"").append(this.getName()).append("\"")
+                .append(NEW_LINE);
+        result.append("TestSuite Description: \"").append(this.getDescription())
+                .append("\"").append(NEW_LINE);
+        result.append("Number of TestAspects: \"").append(this.getNumTestAspects())
+                .append("\"").append(NEW_LINE);
+        result.append("TestAspects: ").append(NEW_LINE).append("{");
 
         for (int i = 0 ; i < aspects.size() ; i++) {
             TestAspect ta = aspects.get(i);
             String num = String.valueOf(i+1);
-            result.append("\tAspect #" +num +" Name: \"" + ta.getName() + "\""+NEW_LINE);
-            result.append("\tAspect #" +num +" Description: \"" + ta.getDescription() + "\""+NEW_LINE);
-            result.append("\tAspect #" +num +" OptionGroups: " +NEW_LINE + "\t{"+NEW_LINE);
+            result.append("\tAspect #").append(num).append(" Name: \"").append(
+                    ta.getName()).append("\"").append(NEW_LINE);
+            result.append("\tAspect #").append(num).append(" Description: \"").
+                    append(ta.getDescription()).append("\"").append(NEW_LINE);
+            result.append("\tAspect #").append(num).append(" OptionGroups: ").
+                    append(NEW_LINE).append("\t{").append(NEW_LINE);
             List<TestOptionGroup> togs = ta.getOptionGroups();
 
             for (int j=0;j<togs.size();j++) {
                 String num2 = String.valueOf(j+1);
-                result.append("\t\tOption Group #" + num2 +": Name: \"" +togs.get(j).getName() + "\""+NEW_LINE);
-                result.append("\t\tOption Group #" + num2 +": Description: \"" 
-                        +togs.get(j).getDescription() + "\""+NEW_LINE);
-                result.append("\t\tOption Group #" + num2 +": Options: " +NEW_LINE+"\t\t{"+NEW_LINE);
+                result.append("\t\tOption Group #").append(num2).append(": Name: \"")
+                        .append(togs.get(j).getName()).append("\"").append(NEW_LINE);
+                result.append("\t\tOption Group #").append(num2).append(": Description: \"")
+                        .append(togs.get(j).getDescription()).append("\"").append(NEW_LINE);
+                result.append("\t\tOption Group #").append(num2).append(": Options: ")
+                        .append(NEW_LINE).append("\t\t{").append(NEW_LINE);
                 List<String> options = togs.get(j).getOptions();
 
                 for (int k=0; k< options.size();k++) {
                     String num3 = String.valueOf(k+1);
-                    result.append("\t\t\tOption #" +num3 + ": \"" +options.get(k) + "\"" +NEW_LINE);
+                    result.append("\t\t\tOption #").append(num3).append(": \"")
+                            .append(options.get(k)).append("\"").append(NEW_LINE);
                 }
-                result.append("\t\t}"+NEW_LINE);
+                result.append("\t\t}").append(NEW_LINE);
             }
-            result.append("\t}"+NEW_LINE);
+            result.append("\t}").append(NEW_LINE);
         }
 
-        result.append(NEW_LINE + "}");
+        result.append(NEW_LINE).append("}");
 
         return result.toString(); //To change body of generated methods, choose Tools | Templates.
     }
@@ -328,79 +340,25 @@ public class TestSuite {
    /////////////////////////////////////////////////////////////////////////////
    /////  P R I V A T E   M E T H O D S   B E L O W  ///////////////////////////
    /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
      * Sets the allTestCases list of test cases to the supplied ListOfLists.
      * @param newTestCases 
-     */
     private void setTestCases(ArrayList<TestCase> newTestCases){
-        this.allTestCases = null;
         this.allTestCases = newTestCases;
         this.numAllTestCases = this.allTestCases.size();    
     }
+     */
 
-    /**
+    /*
      * Sets the smartTestCases list of test cases to the supplied ListOfLists.
      * @param newTestCases 
-     */
     private void setSmartTestCases(ArrayList<TestCase> newSmartTestCases){
         this.smartTestCases = null;
         this.smartTestCases = newSmartTestCases;
         this.numSmartTestCases = this.smartTestCases.size();
     }
+     */
 
-    /**
-     * Returns the current recursive call counter
-     * @return int
-     */
-    private int getRecursiveCallsCounter() {
-        return recursiveCallsCounter;
-    }
-    
-    /**
-     * resets the recursive call counter to zero
-     */
-    private void resetRecursiveCallsCounter() {
-        this.recursiveCallsCounter = 0;
-    }
-    
-    /**
-     * Adds one to the recursive call counter
-     */
-    private void incrementRecursiveCallsCounter() {
-        this.recursiveCallsCounter++;
-    }
-  
-
-
-    /**
-     * Adds several TestCases to the AllTestCase list.
-     * @return boolean true if anything was added, false for everything else
-     */
-    private boolean addToAllTestCases(ArrayList<TestCase> a) {
-        if (a == null || a.isEmpty()){
-            return false;
-        } else {
-            for(int i=0;i<a.size();i++)
-                addToAllTestCase(a.get(i));
-            return true;
-        }//end else
-    }
-    
-
-    /**
-     * Adds several TestCases to the TestSuit's testCase list.
-     * @return boolean true if anything was added, false for everything else
-     */
-    private boolean addToSmartTestCases(ArrayList<TestCase> a) {
-        if (a == null || a.isEmpty()){
-            return false;
-        } else {
-            for(int i=0;i<a.size();i++)
-                addToSmartTestCase(a.get(i));
-            return true;
-        }//end else
-    }
-    
 
     /**
      * Computes the unique combinations 
@@ -423,7 +381,7 @@ public class TestSuite {
      * Computes the Smart Test Case list making use of TestOptionGroups
      */
     private void computeSmartTestCases(){
-        
+        addToSmartTestCase(new TestCase());
     }
     
     
