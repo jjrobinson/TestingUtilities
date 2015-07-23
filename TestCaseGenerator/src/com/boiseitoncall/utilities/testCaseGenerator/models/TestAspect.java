@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Test Aspect object contains a name, and a list of Test Options.  Options are grouped into functional groups.
  */
 package com.boiseitoncall.utilities.testCaseGenerator.models;
 
@@ -14,9 +12,9 @@ import java.util.List;
  */
 public class TestAspect {
     private String name;
-    //private String description;
-    private int numberOfOptions;
-    private List<String> options;
+    private String description;
+    private int numberOfOptionGroups;
+    private List<TestOptionGroup> optionGroups;
 
     /**
      * Default constructor
@@ -24,8 +22,8 @@ public class TestAspect {
     public TestAspect() {
         name = "";
         //description = "";
-        numberOfOptions = 0;
-        options = new ArrayList<String>();
+        numberOfOptionGroups = 0;
+        optionGroups = new ArrayList<TestOptionGroup>();
     }
 
 
@@ -60,7 +58,7 @@ public class TestAspect {
     public TestAspect(String name, String description, int numOfOptions) {
         this.name = name;
         //this.description = description;
-        this.numberOfOptions = numOfOptions;
+        this.numberOfOptionGroups = numOfOptions;
     }
 
 
@@ -84,73 +82,80 @@ public class TestAspect {
      * Returns the number of options in this aspect
      * @return 
      */
-    public int getNumberOfOptions() {
-        return numberOfOptions;
+    public int getNumberOfOptionGroups() {
+        return this.numberOfOptionGroups;
     }
 
     /**
-     * Sets the number of options in this aspect. NOT PREFERRED.  
-     * Instead use addOption, which adds the option and auto-increments the numberOfOptions value
-     * @param numberOfOptions 
+     * Sets the number of options in this aspect. DO NOT USE. This number should 
+     * be calculated.  Instead use addOptionGroup, which adds the option and auto-increments the numberOfOptions value
+     * @param numberOfOptionGroups 
      */
-    public void setNumberOfOptions(int numberOfOptions) {
-        this.numberOfOptions = numberOfOptions;
+    public void setNumberOfOptionGroups(int numberOfOptionGroups) {
+        this.numberOfOptionGroups = numberOfOptionGroups;
     }
 
     /**
      * Returns a list of Options.
      * @return List options
      */
-    public List<String> getOptions() {
-        return options;
+    public List<TestOptionGroup> getOptionGroups() {
+        return this.optionGroups;
     }
 
     /**
-     * Sets the Aspect's options list to the supplied List of options (strings)
-     * @param options 
+     * Sets the Aspect's optionGroups list to the supplied List of TestOptionGroups
+     * @param newOptionGroups 
      */
-    public void setOptions(List<String> options) {
-        this.options = options;
+    public void setOptionGroups(List<TestOptionGroup> newOptionGroups) {
+        this.optionGroups = new ArrayList<TestOptionGroup>();
+        for (TestOptionGroup tog : newOptionGroups) {
+            this.addOptionGroup(tog);
+        }
+        this.numberOfOptionGroups = this.optionGroups.size();
     }
 
-    /*
+    /**
      * Returns the aspect's Description
      * @return 
      *
+     * */
     public String getDescription() {
         return description;
     }
    
-    /*
+    /**
      * Sets the aspect's description.
      * @param description 
      *
+     * */
     public void setDescription(String description) {
         this.description = description;
     }    
-    */
+
     
     /**
      * Adds a new Option to the Aspect and auto-increments the numberOfOptions
      * @param newOption 
      */
-    public void addOption(String newOption){
-        this.options.add(newOption);
+    public void addOptionGroup(TestOptionGroup newOptionGroup){
+        this.optionGroups.add(newOptionGroup);
+        this.numberOfOptionGroups = this.optionGroups.size();
     }
 
     /**
      * clears out all options and resets the numberOfOptions counter to 0.
      */
-    public void clearOptions(){
-        this.options.clear();
-        this.numberOfOptions = 0;
+    public void clearOptionGroups(){
+        this.optionGroups.clear();
+        this.numberOfOptionGroups = 0;
     }
 
 
-    /**
+    /*
      * Overrides the default ToString behavior. system agnostic newline
      * @return 
-     */
+     
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
 
@@ -159,9 +164,9 @@ public class TestAspect {
         result.append(this.getClass().getName() + " Object {" + NEW_LINE);
         result.append("Aspect Name: " +this.getName() + NEW_LINE);
         //result.append("Aspect Description: " +this.getName() + NEW_LINE);
-        result.append("Number of Options: " +this.getNumberOfOptions() + NEW_LINE);
+        result.append("Number of Option Groups: " +this.getNumberOfOptionGroups() + NEW_LINE);
         result.append("Option Names: ");
-        List options = new ArrayList(getOptions());
+        List options = new ArrayList(getOptionGroups());
         for (int i = 0 ; i < options.size() ; i++) {
                 result.append("\"" + options.get(i).toString() + "\", ");
         }
@@ -171,5 +176,5 @@ public class TestAspect {
 
         return result.toString(); //To change body of generated methods, choose Tools | Templates.
     }
-	
+    */
 }
