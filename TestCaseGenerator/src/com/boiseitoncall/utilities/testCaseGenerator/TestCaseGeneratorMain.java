@@ -37,7 +37,7 @@ public class TestCaseGeneratorMain {
 
         //print to screen all the test cases
         //Object has a toString() so we don't need to specify that this is actually a string object.
-        System.out.println("COMPUTED: Total Test Cases: " + testSuite.getNumberOfTestCases());
+        System.out.println("COMPUTED: Total Test Cases: " + testSuite.getNumberOfAllTestCases());
         ArrayList<TestCase> testCases = testSuite.getAllTestCases();
         for (int i = 0 ; i < testCases.size(    ) ; i++) {
             System.out.println("COMPUTED\tTest Case #" + (i+1) + ": " + testCases.get(i).getTestOptions().toString());
