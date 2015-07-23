@@ -7,7 +7,6 @@ package com.boiseitoncall.utilities.testCaseGenerator.models;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,8 +19,10 @@ public class TestSuite {
     private ArrayList<TestAspect> aspects;
     private int numTestAspects;
     private ArrayList<TestCase> allTestCases;
+    private ArrayList<TestCase> smartTestCases;
     private int recursiveCallsCounter;
-  
+    private int numAllTestCases;
+    private int numSmartTestCases;
     
     /**
      * Default constructor
@@ -66,6 +67,7 @@ public class TestSuite {
         this.numTestAspects = this.aspects.size();
         this.allTestCases = new ArrayList<TestCase>();
         computeAllTestCases();
+        computeSmartTestCases();
     }
 
     
@@ -74,7 +76,7 @@ public class TestSuite {
      * @return name String
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -90,7 +92,7 @@ public class TestSuite {
      * @return name String
      */
     public String getDescription() {
-        return desc;
+        return this.desc;
     }
 
     /**
@@ -102,6 +104,16 @@ public class TestSuite {
     }
     
 
+
+    public int getNumAllTestCases() {
+        return this.numAllTestCases;
+    }
+
+    public int getNumSmartTestCases() {
+        return this.numSmartTestCases;
+    }
+  
+
     /**
      * Returns a list of TestAspects
      * @return aspects List<TestAspect>
@@ -112,7 +124,7 @@ public class TestSuite {
 
 
     /**
-     * Returns all the TestCases in this TestSuite
+     * Returns the allTestCases list in this TestSuite
      * @return TestCase {@literal <testCase>}
      */
     public ArrayList<TestCase> getAllTestCases() {
@@ -120,12 +132,40 @@ public class TestSuite {
     }
 
     /**
-     * Ads a single TestCase to the testSuite's AllTestCases list
+     * Returns the smartTestCases list in this TestSuite
+     * @return TestCase {@literal <testCase>}
+     */
+    public ArrayList<TestCase> getSmartTestCases() {
+        return this.smartTestCases;
+    }
+
+    /**
+     * Adds a single TestCase to the allTestCases list
      * @param a {@literal <TestCase>} a TestCase
      * @return boolean true if anything was added, false for everything else
      */
-    private boolean addTestCase(TestCase aTestCase) {
-        return this.allTestCases.add(aTestCase);
+    private boolean addToAllTestCase(TestCase aTestCase) {
+        int i = this.numAllTestCases;
+        this.allTestCases.add(aTestCase);
+        if (i != this.allTestCases.size()) {
+            this.numAllTestCases = this.allTestCases.size();
+            return true;
+        } else { return false; }
+    }
+    
+
+    /**
+     * Adds a single TestCase to the smartTestCases list and sets the 
+     * @param a {@literal <TestCase>} a TestCase
+     * @return boolean true if anything was added, false for everything else
+     */
+    private boolean addToSmartTestCase(TestCase aTestCase) {
+        int i = this.numSmartTestCases;
+        this.smartTestCases.add(aTestCase);
+        if (i != this.smartTestCases.size()){
+            this.numSmartTestCases = this.smartTestCases.size();
+            return true;
+        } else { return false; }
     }
     
 
@@ -146,6 +186,7 @@ public class TestSuite {
             this.allTestCases = new ArrayList<TestCase>();
             //after setting the TestAspects, we need to calculate the AllTestCases
             computeAllTestCases();
+            computeSmartTestCases();
             
             //sanity check to make sure we incremented the # of testAspects
             if(oldCountOfAspects != this.numTestAspects)
@@ -173,6 +214,7 @@ public class TestSuite {
             //after setting the TestAspects and blanking out the AllTestCases
             // we need to calculate the AllTestCases based on the new TestAspects
             computeAllTestCases();
+            computeSmartTestCases();
             
             //sanity check to make sure we incremented the # of testAspects
             if(tmpCount != this.numTestAspects)
@@ -191,6 +233,7 @@ public class TestSuite {
         this.numTestAspects = newApsects.size();
         //after setting the TestAspects, we need to calculate the AllTestCases
         computeAllTestCases();
+        computeSmartTestCases();
     }
 
     
@@ -201,10 +244,10 @@ public class TestSuite {
      */
     public ArrayList<String> getAspectNames(){
         ArrayList aspectNames = new ArrayList<>();
-        Iterator<TestAspect> i = aspects.listIterator();
-        while (i.hasNext()){
-            aspectNames.add(i.next().getName());
-            }
+        
+        for (TestAspect ta : this.aspects) {
+            aspectNames.add(ta.getName());
+        }
         return aspectNames;
     }
 
@@ -268,8 +311,17 @@ public class TestSuite {
      * Returns the number of test cases in the TestSuite
      * @return int NumTestCases
      */
-    public int getNumberOfTestCases(){
-        return this.allTestCases.size();
+    public int getNumberOfAllTestCases(){
+        return this.numAllTestCases;
+    }
+  
+
+    /**
+     * Returns the number of test cases in the TestSuite
+     * @return int NumTestCases
+     */
+    public int getNumberOfSmartTestCases(){
+        return this.numSmartTestCases;
     }
 
 
@@ -277,12 +329,23 @@ public class TestSuite {
    /////  P R I V A T E   M E T H O D S   B E L O W  ///////////////////////////
    /////////////////////////////////////////////////////////////////////////////
     /**
-     * Sets the complete list of test cases to the supplied ListOfLists.
+     * Sets the allTestCases list of test cases to the supplied ListOfLists.
      * @param newTestCases 
      */
     private void setTestCases(ArrayList<TestCase> newTestCases){
         this.allTestCases = null;
         this.allTestCases = newTestCases;
+        this.numAllTestCases = this.allTestCases.size();    
+    }
+
+    /**
+     * Sets the smartTestCases list of test cases to the supplied ListOfLists.
+     * @param newTestCases 
+     */
+    private void setSmartTestCases(ArrayList<TestCase> newSmartTestCases){
+        this.smartTestCases = null;
+        this.smartTestCases = newSmartTestCases;
+        this.numSmartTestCases = this.smartTestCases.size();
     }
 
     /**
@@ -310,15 +373,30 @@ public class TestSuite {
 
 
     /**
-     * Adds several TestCases to the TestSuit's testCase list.
+     * Adds several TestCases to the AllTestCase list.
      * @return boolean true if anything was added, false for everything else
      */
-    private boolean addTestCases(ArrayList<TestCase> a) {
+    private boolean addToAllTestCases(ArrayList<TestCase> a) {
         if (a == null || a.isEmpty()){
             return false;
         } else {
             for(int i=0;i<a.size();i++)
-                addTestCase(a.get(i));
+                addToAllTestCase(a.get(i));
+            return true;
+        }//end else
+    }
+    
+
+    /**
+     * Adds several TestCases to the TestSuit's testCase list.
+     * @return boolean true if anything was added, false for everything else
+     */
+    private boolean addToSmartTestCases(ArrayList<TestCase> a) {
+        if (a == null || a.isEmpty()){
+            return false;
+        } else {
+            for(int i=0;i<a.size();i++)
+                addToSmartTestCase(a.get(i));
             return true;
         }//end else
     }
@@ -336,9 +414,20 @@ public class TestSuite {
         recursiveCallsCounter = 0;
         recurse(optionsList, arrayOfArrays, 0);
     
-        //System.out.println("Total Test Cases: " + this.getNumberOfTestCases());
+        //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
         //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
+        this.numAllTestCases = this.allTestCases.size();
     }
+    
+    /**
+     * Computes the Smart Test Case list making use of TestOptionGroups
+     */
+    private void computeSmartTestCases(){
+        
+    }
+    
+    
+    
 
     /**
      * Recursive function to traverse an Array of Arrays.
@@ -374,7 +463,7 @@ public class TestSuite {
             for (int i=0; i < newOptionsList.size();i++){
                 tc.addTestOption(newOptionsList.get(i));
                 }
-            this.addTestCase(tc);
+            this.addToAllTestCase(tc);
         }
         
     }//end recursive helper 
