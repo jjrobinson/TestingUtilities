@@ -1,14 +1,13 @@
 package com.boiseitoncall.utilities.testCaseGenerator;
 
-import static com.boiseitoncall.utilities.testCaseGenerator.TestCaseGeneratorMain.testSuite;
 import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
+import com.boiseitoncall.utilities.testCaseGenerator.models.TestOptionGroup;
 import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import javax.management.RuntimeErrorException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Fills out the details of a TestSuite.  Currently only supports command line interactions.
@@ -17,147 +16,56 @@ import java.util.List;
  */
 public class TestSuiteBuilder {
     private String builderType;
-    private TestSuite suite;
-    private static String NEW_LINE = System.getProperty("line.separator");
+    private TestSuite testSuite;
+
     /**
      * The main method of this class (not to be confused with main(String args[]).
      * Call this method to create a new TestSuite via the command line.
-     * 
-     * @param suite
-     * @param numberOfTestAspects
-     * @return 
+     * @throws Exception e
+     * @return TestSuite 
      */
-    public TestSuite createTestSuiteCmdLine() {
+    public TestSuite createTestSuiteCmdLine() throws Exception{
         this.builderType = "command line";
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader console = new BufferedReader(isr);
-		
-        suite = new TestSuite();
-        String numAspectsString = new String();
         int numberOfTestAspects = 0;
+        //to get FindBugs to stop complaining about DM_DEFAULT_ENCODING, providing the encoding type
         
-		try {
-			System.out.print("Enter the Name of this TestSuite: ");
-            suite.setName(console.readLine());
-			System.out.print("Enter the Description of this TestSuite: ");
-            suite.setDescription(console.readLine());
-		} catch(Exception e) {}
-		
-		
-        //initial prompt to get number of TestAspects
-        System.out.print("Enter the number of different Aspects to be tested: ");
-        // get their input as a String
-        try {
-            numAspectsString = console.readLine();
-            numberOfTestAspects = Integer.parseInt(numAspectsString);
-        } catch(NumberFormatException e)
-        {
-            System.out.println("ERROR: Non number submitted for 'Number of Aspects': \"" + numAspectsString + "\"");
-        }catch(IOException e) {
-            System.out.println("ERROR: Could not read from standard input / console. " + e);
+        try{
+            BufferedReader console = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+
+            testSuite = new TestSuite();
+
+
+            //enter a name
+            testSuite.setName(getAStringCmdLine(console, 
+                    "Enter a NAME for this Test Suite",""));
+
+            //enter a description
+            testSuite.setDescription(getAStringCmdLine(console, 
+                    "Enter a DESCRIPTION for this Test Suite",""));
+
+            //initial prompt to get number of TestAspects
+            numberOfTestAspects = getAPositiveNumber(console,0, 
+                    "Enter the NUMBER of different Aspects to be tested");
+
+            for (int i = 0 ; i< numberOfTestAspects ; i++)
+            {
+                String num = String.valueOf(i+1);
+                try { System.out.println(
+                        FigletFont.convertOneLine("Aspect    #" + num)); 
+                } catch(Exception e) {
+                throw e;}
+
+                testSuite.addAspect(getTestAspectCmdLine(console, num));
+            }
+            return testSuite;
+        
+        } catch (Exception e) {
+            //can't read from console, so throw an error and quit
+            throw new RuntimeErrorException(new Error());
         }
-
-        
-        for (int i = 1 ; i<= numberOfTestAspects ; i++)
-        {
-            //System.out.println("\tDEBUG: Inside: ComputeTestCases Aspects Loop...");
-            try { System.out.println(FigletFont.convertOneLine("Aspect    #" + i)); } catch(Exception e) {}
-
-
-            //fillInAspect(testSuite, scanner);
-            //fillInAspect(testSuite, i);
-            suite.addAspect(getTestAspectCmdLine(console, i));
-        }
-        return suite;
-        
     }// end of createTestSuite
     
 
-    /**
-     * Prompts user via command line for the properties of the TestAspect
-     * @return TestAspect
-     */
-    public TestAspect getTestAspectCmdLine(BufferedReader console, int aspectNumber){ 
-        TestAspect newAspect = new TestAspect();
-        String aspectName = new String("");
-        //String aspectDescription = new String(""); // removing this for simplicity
-        
-        int aspectNumberOfOptions = 0;
-        List<String> aspectOptions = new ArrayList();
-        
-
-        
-        //enter a name
-        if (aspectName.isEmpty())
-        {
-            System.out.print("Enter test aspect " +aspectNumber + "'s NAME: ");
-            //aspectName = scanner.next();
-            try { aspectName = console.readLine().toString(); } catch(Exception e) {};
-            newAspect.setName(aspectName);
-        }
-        
-        /* will just use the name only for now.
-        //enter a description
-        if (aspectDescription.isEmpty())
-        {
-            System.out.print("\tEnter the test Aspect DESCRIPTION. Hit Enter when done:");
-            aspectDescription = scanner.next();
-            newAspect.setDescription(aspectDescription);
-        }
-        */
-        //aspectDescription = aspectName;
-        //newAspect.setDescription(aspectName);
-        
-        
-        if (aspectNumberOfOptions < 1 );
-        {
-            System.out.print("\tEnter the NUMBER of different options for Aspect " +aspectNumber + " \"" +aspectName 
-                    +"\": ");
-            try {
-            //try { aspectName = console.readLine(); } catch(Exception e) {};
-
-            //aspectNumberOfOptions = Integer.parseInt(scanner.next());
-                aspectNumberOfOptions = Integer.parseInt(console.readLine().toString());
-            } catch(NumberFormatException e)
-            {
-                System.out.println("ERROR: Non number submitted for 'Number of Options' for aspect \"" 
-                        +aspectName +"\"" + aspectNumberOfOptions);
-            } catch (Exception e) { }
-            
-            //if we have a number and it is larger than 0, then fill in that number of Aspect options
-            if (aspectNumberOfOptions > 0)
-            {
-                newAspect.setNumberOfOptions(aspectNumberOfOptions);
-                
-                for (int i = 0; i < aspectNumberOfOptions ; i ++)
-                {
-                    String newOption = new String("");
-                    try {
-                        System.out.print("\tOption #" + (i+1) + "'s name: ");
-                        //newOption = scanner.next();
-                        newOption = console.readLine().toString();
-                        aspectOptions.add(newOption);
-                    } catch(Exception e)
-                    {
-                    System.out.println("ERROR: Problem reading the option: \"" + newOption + "\"." + NEW_LINE + "EXCEPTION:" + e);
-                    }
-                }
-                
-                
-            } else { // you entered a number, but it wasn't larger than 0.
-                System.out.println("ERROR: You entered a negative or zero value for 'aspectNumberOfOptions': \"" 
-                        +aspectNumberOfOptions + "\"");
-                //reset to zero and try again.
-                aspectNumberOfOptions = 0;
-            }// end loop to get Options entered
-        }//end entry of Options.
-        
-        newAspect.setOptions(aspectOptions);
-        
-        return newAspect;
-    } ////////////// end of getTestAspectCmdLine //////////////////////////////////// 
-    
-    
     /**
      * Simple is numeric type check
      * @param input
@@ -170,17 +78,17 @@ public class TestSuiteBuilder {
 
     /**
      * Displays a giant banner to make reading easier
+     * @throws Exception e
      */
-    public void DisplayBannerCmdLine() {
-                //String asciiArt= "";
-        try {
-            //asciiArt = FigletFont.convertOneLine("Test" + NEW_LINE + "Case" + NEW_LINE + "Generator");
-            //asciiArt = FigletFont.convertOneLine("Test" + NEW_LINE + "Case" + NEW_LINE + "Generator");
+    public void displayBannerCmdLine() throws Exception {
+        try { 
             System.out.println(FigletFont.convertOneLine("Test"));
             System.out.println(FigletFont.convertOneLine("Case"));
             System.out.println(FigletFont.convertOneLine("Generator"));
-        }catch(Exception e) {
-            }
+        } catch(Exception e) { 
+            throw e;
+        }
+        
     }
 
     /**
@@ -203,11 +111,159 @@ public class TestSuiteBuilder {
     }
 
     
-}//end of class
+   /////////////////////////////////////////////////////////////////////////////
+   /////  P R I V A T E   M E T H O D S   B E L O W  ///////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Prompts user via command line for the properties of the TestAspect
+     * @throws Exception for output via FigletFont
+     * @param r
+     * @param num String
+     * @return 
+     */
+    private TestAspect getTestAspectCmdLine(
+            BufferedReader r, String num) throws Exception{
+        //initialize the new TestAspect
+        TestAspect newAspect = new TestAspect();
+        int numberOfOptionGroups = 0;
+        
+        //enter an aspect's name
+        newAspect.setName(getAStringCmdLine(
+                r, "\tEnter a NAME for test aspect ",num));
+        
+        
+        //enter an aspect's description
+        newAspect.setDescription(getAStringCmdLine(
+                r, "\tEnter a DESCRIPTION for test aspect ",num));
+        
+        //get the number of TestOptionGroups
+        StringBuilder sb = new StringBuilder();
+        sb.append("Enter the NUMBER of TestOption Groups for TestAspect ")
+                .append(num);
+        numberOfOptionGroups = getAPositiveNumber(r, 1, sb.toString());
+
+        //fill in the details of each option group
+        for (int i=0;i< numberOfOptionGroups; i++) {
+            
+            //banner for the new OptionGroup
+            try { System.out.println(
+                FigletFont.convertOneLine("        Option Group    #"+(i+1))); 
+            } catch(Exception e) { throw e;}
+
+            //prompt to fill in each option group
+            newAspect.addOptionGroup(getTestOptionGroupCmdLine(r, 
+                    String.valueOf(i)));
+        }
+
+        return newAspect;
+    } ////////////// end of getTestAspectCmdLine //////////////////////////////////// 
+ 
+   
+    /**
+     * Prompts to fill in the information for a TestOptionGroup. 
+     * ONLY called by getTestAspectCmdLine
+     * 
+     * @param r BufferedReader
+     * @param optionGroupNumber int
+     * @return TestOptionGroup tog
+     */
+    private TestOptionGroup getTestOptionGroupCmdLine(BufferedReader r, 
+            String num) throws Exception {
+        int numberOfOptions = 0;
+        int groupNumber = Integer.parseInt(num)+1;
+        String groupNumberAsString = String.valueOf(groupNumber);
+        
+        //enter a name
+        String name = getAStringCmdLine(r, 
+                "\t\tEnter a NAME for Test Option Group ", groupNumberAsString);
+        
+        //enter a description
+        String desc = getAStringCmdLine(r, 
+                "\t\tEnter a DESCRIPTION for the Test Option Group ", 
+                groupNumberAsString);
+        TestOptionGroup tog = new TestOptionGroup(name, desc);
+
+        
+        //fill in the details of each option group
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Enter the NUMBER of different Options in TestOptionGroup \"")
+                .append(name).append("\"");
+
+        numberOfOptions = getAPositiveNumber(r, 2, sb.toString());
+
+
+        //now we have the name, desc, and number of options in this group
+        //time to fill in the options
+        for(int i=0; i<numberOfOptions;i++) {
+            StringBuilder s = new StringBuilder();
+            s.append("\t\t\tEnter a value for OptionGroup ").append(groupNumber)
+                    .append(": \"").append(name).append("\" - Option #")
+                    .append((i+1));
+            tog.addOption(getAStringCmdLine(r,s.toString(),""));
+        }
+
+        return tog;
+    }
     
-    
-    
-    
-    
+ 
+    /**
+     * Prompts user for input from the console with a leading description
+     * @param console BufferedReader
+     * @param desc String leading string
+     * @param number String further description
+     * @return 
+     */
+    private String getAStringCmdLine(
+            BufferedReader console, String desc, String number) throws Exception{
+        System.out.print(desc +number +": ");
+        try { 
+            return console.readLine();
+        } catch(Exception e) { 
+            throw e;
+        }
+
+
+    }
     
 
+    /**
+     * Prompts the user for a number and provides a description. Intents by depth
+     * @throws Exception e
+     * @param r BufferedReader
+     * @param depth int how many tabs to indent
+     * @param desc String
+     * @return 
+     */
+    private int getAPositiveNumber(BufferedReader r, int depth, String desc) 
+            throws Exception{
+        String spacingDepth = StringUtils.repeat("\t", depth);
+        int theNumber = 0;
+        while(theNumber == 0) {
+            System.out.print(spacingDepth +desc+": ");
+            try {
+                theNumber = Integer.parseInt(r.readLine());
+            } catch(NumberFormatException e)
+            {
+                System.out.println(spacingDepth+
+                        "ERROR: Non number submitted for : \""+desc +"\"");
+                theNumber = 0;
+            //catch everything else
+            } catch (Exception e) { 
+                
+                theNumber = 0;
+            }
+
+            //we finally got a number, but it is zero or negative
+            if(theNumber < 1) {
+                System.out.println(spacingDepth
+                        +"ERROR: You entered a negative or zero value for \""
+                        +desc +"\"  Try again.");
+                //reset to zero and try again.
+                theNumber = 0;
+            }
+        }
+        return theNumber;
+
+    }
+}//end of class
