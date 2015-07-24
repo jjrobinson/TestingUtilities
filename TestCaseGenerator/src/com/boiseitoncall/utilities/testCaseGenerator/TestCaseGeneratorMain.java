@@ -8,10 +8,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main entry point for running TestGenerator as a jar
+ * @author robinso3
+ */
 public class TestCaseGeneratorMain {
 
-    public static TestSuite testSuite;
-    private static String NEW_LINE = System.getProperty("line.separator");
+    /**
+     * The TestSuite object for the static main(String args[])
+     */
+    static TestSuite testSuite;
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
      * @param args the command line arguments
@@ -25,25 +32,45 @@ public class TestCaseGeneratorMain {
         ArrayList<String> prior_auth_types = new ArrayList<String>();
       */
         printUsageCmdLine();
+        boolean demo = false;
+        if (args != null) {
+            for (String s : args) {
+                if (s.equalsIgnoreCase("demo")) {
+                    demo = true;
+                }
+            }
+            if (demo) {
+                //call to populate all info from hard coded lists for testing.
+                testSuite = callHardCodedVersion();
+            } else {
+                //Call to function to get all user input
+                testSuite = getInputCmdLine();
+            }
+        }
         
-        //Call to function to get all user input
-        testSuite = getInputCmdLine();
         
-        //call to populate all info from hard coded lists for testing.
-        //testSuite = HardCodedVersion();
+        
 
         System.out.println("TestSuite.toString(): ");
         System.out.println(testSuite.toString());
 
-        //print to screen all the test cases
+        //print to screen the ALL test cases list
         //Object has a toString() so we don't need to specify that this is actually a string object.
-        System.out.println("COMPUTED: Total Test Cases: " + testSuite.getNumberOfTestCases());
-        ArrayList<TestCase> testCases = testSuite.getAllTestCases();
-        for (int i = 0 ; i < testCases.size(    ) ; i++) {
-            System.out.println("COMPUTED\tTest Case #" + (i+1) + ": " + testCases.get(i).getTestOptions().toString());
+        System.out.println("All Possible Test Cases: " + testSuite.getNumberOfAllTestCases());
+        ArrayList<TestCase> allTestCases = testSuite.getAllTestCases();
+        for (int i = 0 ; i < allTestCases.size(    ) ; i++) {
+            System.out.println("ALL\tTest Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
+        }
+/*
+        //print to screen the SMART test cases list
+        //Object has a toString() so we don't need to specify that this is actually a string object.
+        System.out.println("\n\nSmart Test Cases: " + testSuite.getNumberOfSmartTestCases());
+        ArrayList<TestCase> smartTestCases = testSuite.getSmartTestCases();
+        for (int i = 0 ; i < smartTestCases.size(    ) ; i++) {
+            System.out.println("SMART\tTest Case #" + (i+1) + ": " + smartTestCases.get(i).getTestOptions().toString());
         }
         
-        
+        */
         
         /*
         for (ArrayList testCase : testSuite.getAllTestCases()) {
@@ -52,7 +79,10 @@ public class TestCaseGeneratorMain {
         
     }//end main(Args)
 
-    
+    /**
+     * Outputs the allTestCases list to the console
+     * @param allTestCases 
+     */
     public static void printTestCasesCmdLine(List<TestCase> allTestCases){
         System.out.println("Printing All Possible Test Cases.");
         for(int i = 0 ; i < allTestCases.size(); i++) {
@@ -90,10 +120,12 @@ public class TestCaseGeneratorMain {
     public static TestSuite getInputCmdLine() {
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
-        BobTheBuilder.DisplayBannerCmdLine();
+        try{
+            BobTheBuilder.displayBannerCmdLine();
 
         //fill in all the aspects
         testSuite = BobTheBuilder.createTestSuiteCmdLine();
+        }catch (Exception e) { e.printStackTrace();}
 
         //List testCases = new ArrayList(ComputeTestCases(testSuite));
 
@@ -105,10 +137,8 @@ public class TestCaseGeneratorMain {
      * hard coded method to populate a TestSuite
      * @return TestSuite ts
      */
-    public static TestSuite HardCodedVersion() {
+    public static TestSuite callHardCodedVersion() {
 
-        //list of aspects
-        List hardCodedAspectList = new ArrayList<>();
 
         /*
         Non-Modified: "H2000", "H2032", "97537", "H2011"
