@@ -32,25 +32,45 @@ public class TestCaseGeneratorMain {
         ArrayList<String> prior_auth_types = new ArrayList<String>();
       */
         printUsageCmdLine();
+        boolean demo = false;
+        if (args != null) {
+            for (String s : args) {
+                if (s.equalsIgnoreCase("demo")) {
+                    demo = true;
+                }
+            }
+            if (demo) {
+                //call to populate all info from hard coded lists for testing.
+                testSuite = callHardCodedVersion();
+            } else {
+                //Call to function to get all user input
+                testSuite = getInputCmdLine();
+            }
+        }
         
-        //Call to function to get all user input
-        testSuite = getInputCmdLine();
         
-        //call to populate all info from hard coded lists for testing.
-        //testSuite = callHardCodedVersion();
+        
 
         System.out.println("TestSuite.toString(): ");
         System.out.println(testSuite.toString());
 
-        //print to screen all the test cases
+        //print to screen the ALL test cases list
         //Object has a toString() so we don't need to specify that this is actually a string object.
-        System.out.println("COMPUTED: Total Test Cases: " + testSuite.getNumberOfAllTestCases());
-        ArrayList<TestCase> testCases = testSuite.getAllTestCases();
-        for (int i = 0 ; i < testCases.size(    ) ; i++) {
-            System.out.println("COMPUTED\tTest Case #" + (i+1) + ": " + testCases.get(i).getTestOptions().toString());
+        System.out.println("All Possible Test Cases: " + testSuite.getNumberOfAllTestCases());
+        ArrayList<TestCase> allTestCases = testSuite.getAllTestCases();
+        for (int i = 0 ; i < allTestCases.size(    ) ; i++) {
+            System.out.println("ALL\tTest Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
+        }
+/*
+        //print to screen the SMART test cases list
+        //Object has a toString() so we don't need to specify that this is actually a string object.
+        System.out.println("\n\nSmart Test Cases: " + testSuite.getNumberOfSmartTestCases());
+        ArrayList<TestCase> smartTestCases = testSuite.getSmartTestCases();
+        for (int i = 0 ; i < smartTestCases.size(    ) ; i++) {
+            System.out.println("SMART\tTest Case #" + (i+1) + ": " + smartTestCases.get(i).getTestOptions().toString());
         }
         
-        
+        */
         
         /*
         for (ArrayList testCase : testSuite.getAllTestCases()) {
@@ -100,10 +120,12 @@ public class TestCaseGeneratorMain {
     public static TestSuite getInputCmdLine() {
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
-        BobTheBuilder.displayBannerCmdLine();
+        try{
+            BobTheBuilder.displayBannerCmdLine();
 
         //fill in all the aspects
         testSuite = BobTheBuilder.createTestSuiteCmdLine();
+        }catch (Exception e) { e.printStackTrace();}
 
         //List testCases = new ArrayList(ComputeTestCases(testSuite));
 

@@ -370,7 +370,7 @@ public class TestSuite {
         ArrayList<ArrayList<String>> arrayOfArrays = buildArrayOfArrays();
         
         recursiveCallsCounter = 0;
-        recurse(optionsList, arrayOfArrays, 0);
+        recurseIgnoringGroups(optionsList, arrayOfArrays, 0);
     
         //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
         //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
@@ -381,7 +381,15 @@ public class TestSuite {
      * Computes the Smart Test Case list making use of TestOptionGroups
      */
     private void computeSmartTestCases(){
-        addToSmartTestCase(new TestCase());
+        ArrayList<String> smartOptionsList = new ArrayList<String>();
+        ArrayList<ArrayList<String>> arrayOfArrays = buildArrayOfArrays();
+        
+        recursiveCallsCounter = 0;
+//        recurseIgnoringGroups(smartOptionsList, arrayOfArrays, 0);
+    
+        //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
+        //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
+        this.numAllTestCases = this.allTestCases.size();
     }
     
     
@@ -394,7 +402,7 @@ public class TestSuite {
      * @param newAofA
      * @param placeHolder 
      */
-    private void recurse(ArrayList<String> newOptionsList, 
+    private void recurseIgnoringGroups(ArrayList<String> newOptionsList, 
         ArrayList<ArrayList<String>> newAofA, int placeHolder){
         
         //check to see if we are at the end of the AofA
@@ -413,7 +421,7 @@ public class TestSuite {
                 }
                 newOptions.add(currentAspectsOptions.get(i));
                 int newPlaceHolder = placeHolder + 1;
-                recurse(newOptions,newAofA, newPlaceHolder);
+                recurseIgnoringGroups(newOptions,newAofA, newPlaceHolder);
             }
         } else { // no more arrays to pop off
             

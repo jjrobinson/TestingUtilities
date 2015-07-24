@@ -112,7 +112,7 @@ public class TestOptionGroup {
         this.options.add(newOption);
         this.numberOfOptions = this.options.size();
         int i = this.options.indexOf(newOption);
-        this.usesCounter.set(i, 0);
+        this.usesCounter.add(i, 0);
     }
 
 
@@ -161,7 +161,7 @@ public class TestOptionGroup {
     private void setUses(int size){
         this.usesCounter = new ArrayList();
         for(int i=0; i< size ;i++) {
-            this.usesCounter.set(i, 0);
+            this.usesCounter.add(i, 0);
         }
     }
     //*/

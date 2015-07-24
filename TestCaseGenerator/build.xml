@@ -7,13 +7,9 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="TestCaseGenerator" default="BuildRelease" basedir="."  xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="TestCaseGenerator" default="BuildRelease" basedir="."  >
     <description>Builds, tests, and runs the project TestCaseGenerator.</description>
     <import file="nbproject/build-impl.xml"/>
-    <taskdef name="ivy-configure" classname="org.apache.ivy.ant.IvyConfigure"/>
-    <taskdef name="ivy-resolve" classname="org.apache.ivy.ant.IvyResolve"/>
-    <taskdef name="ivy-retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
-    <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/> 
     <!--
 
     There exist several targets which are by default empty and which can be 
