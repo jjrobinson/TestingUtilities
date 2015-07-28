@@ -7,6 +7,6 @@ TestCaseGenerator/release/
 /CMSInterfaceFileVerification/nbproject/private/
 /CMSInterfaceFileVerification/build/
 /CMSInterfaceFileVerification/dist/
-/UniqueNPIGenerator/nbproject/private/
-/UniqueNPIGenerator/build/
-/UniqueNPIGenerator/dist/
+UniqueNPIGenerator/build/
+UniqueNPIGenerator/dist/
+UniqueNPIGenerator/nbproject/private/
