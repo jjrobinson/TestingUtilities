@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.boiseitoncall.utilities;
+package com.boiseitoncall.utilities.npigen;
 
 import java.io.File;
 import java.io.FileWriter;
