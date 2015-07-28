@@ -5,7 +5,7 @@
  */
 package recursivealgorithmtest;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
+
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,10 +49,6 @@ public class RecursiveAlgorithmTest {
     private static void recurse(ArrayList<String> newOptionsList, 
         ArrayList<ArrayList<String>> newAofA, int placeHolder){
         recursiveCallsCounter++;
-        System.out.println("\n\tStart of Recursive Call: " + recursiveCallsCounter);
-        System.out.println("\tOptionsList: " + newOptionsList.toString());
-        System.out.println("\tAofA: " + newAofA.toString());
-        System.out.println("\tPlaceHolder: "+ placeHolder);
 
         //check to see if we are at the end of all TestAspects
         if(placeHolder < newAofA.size()){
@@ -60,9 +56,6 @@ public class RecursiveAlgorithmTest {
             //remove the first item in the ArrayOfArrays
             ArrayList<String> currentAspectsOptions = newAofA.get(placeHolder);
             //iterate through the popped off options
-            
-            
-
             
             for (int i=0 ; i<currentAspectsOptions.size();i++){
                 ArrayList<String> newOptions = new ArrayList<String>();
@@ -80,7 +73,6 @@ public class RecursiveAlgorithmTest {
             for (int i=0; i < newOptionsList.size();i++){
                 newTestCase.add(newOptionsList.get(i));
             }
-            System.out.println("\t### Adding: "+newTestCase.toString());
             testCases.add(newTestCase);
         }
     }//end recursive helper 
