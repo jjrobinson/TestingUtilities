@@ -8,8 +8,6 @@ package com.boiseitoncall.utilities;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
@@ -18,8 +16,8 @@ import org.apache.commons.io.LineIterator;
 public class UniqueNPIGenerator {
     
     private static final String NEW_LINE = System.getProperty("line.separator");
-    private static final String NPIs_FILE = "c:\\dev\\test\\interfaces\\complete_npi_list.txt";
-    private static final String RAW_NPI_DB = "c:\\dev\\test\\interfaces\\npidata_20050523-20150712.csv";
+    private static final String NPIs_FILE = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\complete_npi_list.txt";
+    private static final String RAW_NPI_DB = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\npidata_20050523-20150712.csv";
     private static final String COMPRESSED_NPIS_FILE_LOCAL = "c:\\dev\\test\\interfaces\\complete_npi_list-7z-Ultra-LZMA2-32MB-32-4gb.7z";
     /**
      * @param args the command line arguments
@@ -27,7 +25,7 @@ public class UniqueNPIGenerator {
     public static void main(String[] args) {
         
         //only need to do this once!
-        //ingestNPIs()
+        ingestNPIs();
     }
 
     /**
