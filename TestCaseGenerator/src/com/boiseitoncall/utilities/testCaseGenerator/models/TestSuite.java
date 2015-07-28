@@ -382,14 +382,14 @@ public class TestSuite {
      */
     private void computeSmartTestCases(){
         ArrayList<String> smartOptionsList = new ArrayList<String>();
-        ArrayList<ArrayList<String>> arrayOfArrays = buildArrayOfArrays();
+        ArrayList<ArrayList<String>> smartArrayOfArrays = buildArrayOfArrays();
         
         recursiveCallsCounter = 0;
-//        recurseIgnoringGroups(smartOptionsList, arrayOfArrays, 0);
+        recurseWithGroups(smartOptionsList, smartArrayOfArrays, 0);
     
         //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
         //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
-        this.numAllTestCases = this.allTestCases.size();
+        this.numSmartTestCases = this.smartTestCases.size();
     }
     
     
@@ -403,6 +403,46 @@ public class TestSuite {
      * @param placeHolder 
      */
     private void recurseIgnoringGroups(ArrayList<String> newOptionsList, 
+        ArrayList<ArrayList<String>> newAofA, int placeHolder){
+        
+        //check to see if we are at the end of the AofA
+        if(placeHolder < newAofA.size()) {
+            //Get the next item in the ArrayOfArrays
+            ArrayList<String> currentAspectsOptions = newAofA.get(placeHolder);
+            
+            //iterate through the new TestAspect's Options
+            for(int i = 0 ; i < currentAspectsOptions.size();i++) {
+                //new Options List
+                ArrayList<String> newOptions = new ArrayList<String>();
+                
+                //iterate through and store a copy of the newOptionsList
+                for (int j=0 ; j < newOptionsList.size();j++) {
+                    newOptions.add(newOptionsList.get(j));
+                }
+                newOptions.add(currentAspectsOptions.get(i));
+                int newPlaceHolder = placeHolder + 1;
+                recurseIgnoringGroups(newOptions,newAofA, newPlaceHolder);
+            }
+        } else { // no more arrays to pop off
+            
+            TestCase tc = new TestCase();
+            for (int i=0; i < newOptionsList.size();i++){
+                tc.addTestOption(newOptionsList.get(i));
+                }
+            this.addToAllTestCase(tc);
+        }
+        
+    }//end recursive helper 
+
+    
+    /**
+     * Recursive function to traverse Smart groups
+     * 
+     * @param newOptionsList
+     * @param newAofA
+     * @param placeHolder 
+     */
+    private void recurseWithGroups(ArrayList<String> newOptionsList, 
         ArrayList<ArrayList<String>> newAofA, int placeHolder){
         
         //check to see if we are at the end of the AofA
