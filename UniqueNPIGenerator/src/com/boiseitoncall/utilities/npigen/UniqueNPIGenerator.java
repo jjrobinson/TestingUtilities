@@ -6,10 +6,20 @@
 
 package com.boiseitoncall.utilities.npigen;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
+import java.io.InputStreamReader;
+import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement; 
+
+
 
 
 
@@ -19,15 +29,173 @@ public class UniqueNPIGenerator {
     private static final String NPIs_FILE = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\complete_npi_list.txt";
     private static final String RAW_NPI_DB = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\npidata_20050523-20150712.csv";
     private static final String COMPRESSED_NPIS_FILE_LOCAL = "c:\\dev\\test\\interfaces\\complete_npi_list-7z-Ultra-LZMA2-32MB-32-4gb.7z";
+    private static final String GZIPPED_NPIS_FILE_LOCAL = "c:\\dev\\test\\interfaces\\complete_npi_list.txt.gz";
+    private static final String CONNECTION_STRING_FILE = "C:\\dev\\test\\interfaces\\jtds_connection_string-UAT01-ENV01.txt";
+    private static final String QUERY_STRING_FILE = "C:\\dev\\test\\interfaces\\query_string.txt";
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         
-        //only need to do this once!
-        ingestNPIs();
-    }
+//        Args4JOptionsOptionsBean bean = new Args4JOptionsOptionsBean();
+//        CmdLineParser parser = new CmdLineParser(bean);
+//
+//        try {
+//            parser.parseArgument(args);
+//        } catch( CmdLineException e ) {
+//            System.err.println(e.getMessage());
+//            System.err.println("java -jar UniqueNPIGenerator.jar [options...] arguments...");
+//            parser.printUsage(System.err);
+//            return;
+//        }
 
+        //only need to do this once!
+        //ingestNPIs();
+        
+        //openZippedNPIs();
+        
+        String connectionString = getConnectionString();
+        String queryString = getQueryString();
+
+        System.out.println("Connection String: \"" + connectionString + "\"");
+        System.out.println("Query String: \"" + queryString + "\"");
+        
+        connectToDB(connectionString, queryString);
+        
+        
+        
+        /*
+        
+        Stored every single NPI in a single text file then imported into MySQL via:
+        
+        
+        LOAD DATA LOCAL INFILE 'C:/dev/test/interfaces/complete_npi_list.txt' 
+            INTO TABLE npis FIELDS 
+            TERMINATED BY '' 
+            LINES TERMINATED BY '\r\n' (NPI_from_export);
+        
+        
+        
+        
+        */
+    
+    
+    }//end of main(String args[])
+//SELECT TOP 10 * FROM plandata_parallel.dbo.provider
+    
+    private static String getConnectionString(){
+        
+        LineIterator lineIterator = null;
+        File inFile = new File(CONNECTION_STRING_FILE);
+        String returnString = null;
+        try {
+            lineIterator = FileUtils.lineIterator(inFile, "UTF-8");
+
+            returnString = lineIterator.nextLine();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            LineIterator.closeQuietly(lineIterator);
+            
+        }
+        return returnString;
+    }
+    
+    
+    private static String getQueryString(){
+        
+        LineIterator lineIterator = null;
+        File inFile = new File(QUERY_STRING_FILE);
+        String returnString = null;
+        try {
+            lineIterator = FileUtils.lineIterator(inFile, "UTF-8");
+
+            returnString = lineIterator.nextLine();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            LineIterator.closeQuietly(lineIterator);
+            
+        }
+        return returnString;
+    }
+    
+    
+    /**
+     * 
+     * @param connectionUrl 
+     */
+    private static void connectToDB(String connectionUrl, String query){
+      // Create a variable for the connection string.
+      
+
+      // Declare the JDBC objects.
+      Connection con = null;
+      Statement stmt = null;
+      ResultSet rs = null;
+      ResultSetMetaData rsmd = null;
+
+        
+      
+        try {
+            // Establish the connection.
+            Class.forName("net.sourceforge.jtds.jdbc.JtdsConnection");
+            con = DriverManager.getConnection(connectionUrl);
+
+            // Create and execute an SQL statement that returns some data.
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(query);
+            rsmd = rs.getMetaData();
+            int numColumns = rsmd.getColumnCount();
+            int rowCount = 0;
+            // Iterate through the data in the result set and display it.
+            
+            System.out.print("Header");
+            for (int i = 1; i<=numColumns;i++) {
+                System.out.print(rsmd.getColumnName(i)+ "\t");
+            }
+            
+            while (rs.next()) {
+                rowCount++;
+                System.out.print("Row #"+rowCount+":");
+                for(int i=1;i< numColumns;i++) {
+                    System.out.print("\t" +rs.getString(i));
+                }
+               System.out.println();
+               //System.out.println(rs.getString(4) + " " + rs.g);
+               }
+
+            // Handle any errors that may have occurred.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (rs != null) try { rs.close(); } catch(Exception e) {}
+            if (stmt != null) try { stmt.close(); } catch(Exception e) {}
+            if (con != null) try { con.close(); } catch(Exception e) {}
+        }
+    }
+    
+    
+    
+    
+    public static void openZippedNPIs(){
+        try{
+            GZIPInputStream gis = new GZIPInputStream(new FileInputStream(GZIPPED_NPIS_FILE_LOCAL));
+            // and a BufferedReader on top to comfortably read the file
+            BufferedReader br = new BufferedReader(new InputStreamReader(gis));
+            String line;
+            while((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+            
+        } catch(Exception e) {}
+    }
+    
+    
     /**
      * WARNING: >5GB csv file
      */
