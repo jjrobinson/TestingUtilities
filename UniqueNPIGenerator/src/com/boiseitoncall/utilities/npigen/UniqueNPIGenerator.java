@@ -9,8 +9,15 @@ package com.boiseitoncall.utilities.npigen;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.*;
 import java.sql.Connection;
@@ -18,6 +25,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement; 
+import java.util.ArrayList;
 
 
 
@@ -26,13 +34,20 @@ import java.sql.Statement;
 public class UniqueNPIGenerator {
     
     private static final String NEW_LINE = System.getProperty("line.separator");
-    private static final String NPIs_FILE = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\complete_npi_list.txt";
-    private static final String RAW_NPI_DB = "C:\\dev\\test\\interfaces\\NPPES_Data_Dissemination_July_2015\\npidata_20050523-20150712.csv";
-    private static final String COMPRESSED_NPIS_FILE_LOCAL = "c:\\dev\\test\\interfaces\\complete_npi_list-7z-Ultra-LZMA2-32MB-32-4gb.7z";
-    private static final String GZIPPED_NPIS_FILE_LOCAL = "c:\\dev\\test\\interfaces\\complete_npi_list.txt.gz";
-    private static final String CONNECTION_STRING_FILE = "C:\\dev\\test\\interfaces\\jtds_connection_string-UAT01-ENV01.txt";
-    private static final String QUERY_STRING_FILE = "C:\\dev\\test\\interfaces\\query_string.txt";
-    
+    private static final String FILE_PATH_ROOT_DIR = "c:\\dev\\test\\interfaces\\";
+    private static final String NPIs_FILE = FILE_PATH_ROOT_DIR+"NPPES_Data_Dissemination_July_2015\\complete_npi_list.txt";
+    private static final String RAW_NPI_DB = FILE_PATH_ROOT_DIR+"NPPES_Data_Dissemination_July_2015\\npidata_20050523-20150712.csv";
+    private static final String GZIPPED_NPIS_FILE_LOCAL = FILE_PATH_ROOT_DIR+"complete_npi_list.txt.gz";
+    private static final String PLAINTEXT_NPIS_FILE_LOCAL = FILE_PATH_ROOT_DIR+"complete_npi_list.txt";
+    private static final String CONNECTION_STRING_FILE = FILE_PATH_ROOT_DIR+"jtds_connection_string-UAT01-ENV01.txt";
+    private static final String QUERY_STRING_FILE = FILE_PATH_ROOT_DIR+"query_string.txt";
+    private static final FileSystem FILE_SYSTEM = FileSystems.getDefault();
+
+    private static ArrayList<Long> ZIPPED_RUNS_FILEIO_LIST = new ArrayList<Long>();
+    private static ArrayList<Long> ZIPPED_RUNS_SORT_LIST = new ArrayList<Long>();
+    private static ArrayList<Long> PLAINTEXT_RUNS_FILEIO_LIST = new ArrayList<Long>();
+    private static ArrayList<Long> PLAINTEXT_RUNS_SORT_LIST = new ArrayList<Long>();
+
     /**
      * @param args the command line arguments
      */
@@ -52,9 +67,14 @@ public class UniqueNPIGenerator {
 
         //only need to do this once!
         //ingestNPIs();
+
+
+        //run the tests X times
+        runTests(10);
         
-        //openZippedNPIs();
-        
+        //print out the results
+        printResults();
+/*
         String connectionString = getConnectionString();
         String queryString = getQueryString();
 
@@ -62,7 +82,7 @@ public class UniqueNPIGenerator {
         System.out.println("Query String: \"" + queryString + "\"");
         
         connectToDB(connectionString, queryString);
-        
+        */
         
         
         /*
@@ -82,8 +102,78 @@ public class UniqueNPIGenerator {
     
     
     }//end of main(String args[])
-//SELECT TOP 10 * FROM plandata_parallel.dbo.provider
+
     
+    /**
+     * Runs the test X times
+     */
+    public static void runTests(int numberOfRuns){
+        long[] results = null;
+        for(int i = 0; i<numberOfRuns ; i++) {
+            System.out.println("\r\nITERATION: #"+(i+1));
+            results = openZippedNPIsWithIntegerObjects();
+            ZIPPED_RUNS_FILEIO_LIST.add(results[0]);
+            ZIPPED_RUNS_SORT_LIST.add(results[1]);
+            results = null;
+
+            results = openPlainTextNPIsWithIntegerObjects();
+            PLAINTEXT_RUNS_FILEIO_LIST.add(results[0]);
+            PLAINTEXT_RUNS_SORT_LIST.add(results[1]);
+            results = null;
+        }
+    }
+    
+    
+    
+    /**
+     * Print the Results of the X test runs. Computes average run times.
+     */
+    public static void printResults() {
+        System.out.print("Zipped FileIO Run Times:\n\t");
+        long zippedFileIORunTimes = 0;
+        for(Long L : ZIPPED_RUNS_FILEIO_LIST) {
+            System.out.print(" {" +L +"} ");
+            zippedFileIORunTimes=zippedFileIORunTimes+L;
+        }
+        System.out.println("\tAverage Zipped File IO Run Time: "+(zippedFileIORunTimes/(ZIPPED_RUNS_FILEIO_LIST.size())));
+        
+
+        System.out.print("Zipped Sort Run Times:\n\t");
+        long zippedSortRunTimes = 0;
+        for(Long L : ZIPPED_RUNS_SORT_LIST) {
+            System.out.print(" {" +L +"} ");
+            zippedSortRunTimes=zippedSortRunTimes+L;
+        }
+        System.out.println("\tAverage Zipped File Sort Time: "+(zippedSortRunTimes/(ZIPPED_RUNS_SORT_LIST.size())));
+        
+
+        System.out.print("Plain Text FileIO Run Times:\n\t");
+        long plainTextFileIORunTimes = 0;
+        for(Long L : PLAINTEXT_RUNS_FILEIO_LIST) {
+            System.out.print(" {" +L +"} ");
+            plainTextFileIORunTimes=plainTextFileIORunTimes+L;
+        }
+        System.out.println("\tAverage Plain Text File IO Run Time: "+(plainTextFileIORunTimes/(PLAINTEXT_RUNS_FILEIO_LIST.size())));
+        
+
+        System.out.print("Plain Text Sort Run Times:\n\t");
+        long plainTextSortRunTimes = 0;
+        for(Long L : PLAINTEXT_RUNS_SORT_LIST) {
+            System.out.print(" {" +L +"} ");
+            plainTextSortRunTimes=plainTextSortRunTimes+L;
+        }
+        System.out.println("\tAverage Plain Text Sort Run Time: "+(plainTextSortRunTimes/(PLAINTEXT_RUNS_SORT_LIST.size())));
+        
+
+    }
+    
+    
+    /**
+     * Retrieves SQL Server connection string.
+     * Connection String should look like this:
+     * jdbc:jtds:sqlserver://[server FQDN]:[port];Instance=[DB Instance Name]
+     * @return 
+     */
     private static String getConnectionString(){
         
         LineIterator lineIterator = null;
@@ -94,16 +184,21 @@ public class UniqueNPIGenerator {
 
             returnString = lineIterator.nextLine();
 
+            if (returnString ==null || returnString.isEmpty()) {
+                throw new IOException("ERROR: Cannot read from file, or file contents are empty.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
             LineIterator.closeQuietly(lineIterator);
-            
         }
         return returnString;
     }
     
-    
+    /**
+     * Retrieves the SQL statement query string to use from a file.
+     * @return 
+     */
     private static String getQueryString(){
         
         LineIterator lineIterator = null;
@@ -122,23 +217,19 @@ public class UniqueNPIGenerator {
         }
         return returnString;
     }
-    
+     
     
     /**
-     * 
-     * @param connectionUrl 
+     * Connects to the SQL Server DB using jTDS and executes the provided query
+     * @param connectionUrl
+     * @param query 
      */
     private static void connectToDB(String connectionUrl, String query){
-      // Create a variable for the connection string.
-      
-
-      // Declare the JDBC objects.
+      // Declare the connection objects.
       Connection con = null;
       Statement stmt = null;
       ResultSet rs = null;
       ResultSetMetaData rsmd = null;
-
-        
       
         try {
             // Establish the connection.
@@ -179,24 +270,156 @@ public class UniqueNPIGenerator {
         }
     }
     
-    
-    
-    
-    public static void openZippedNPIs(){
+
+    /**
+     * reads a zipped text file's contents and sorts the array
+     */
+    public static long[] openZippedNPIsWithIntegerObjects(){
+        System.out.println("DEBUG: STARTING openZippedNPIsWithIntegerObjects");
+        long start = System.currentTimeMillis();
+        
+        NPIComparator comparator = new NPIComparator();
+        ArrayList<Integer> npiList = new ArrayList();
+        File zippedInFile = null;
+        String copyOfZippedInFileString = null;
+        FileInputStream fis = null;
+        BufferedReader br = null;
+        //GZIPInputStream gis = null;
+        long startRead = 0; long readTime = 0; long startSort = 0; long sortTime = 0;
+        
+        
         try{
-            GZIPInputStream gis = new GZIPInputStream(new FileInputStream(GZIPPED_NPIS_FILE_LOCAL));
-            // and a BufferedReader on top to comfortably read the file
-            BufferedReader br = new BufferedReader(new InputStreamReader(gis));
-            String line;
-            while((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
+            double rand = Math.random();
+            copyOfZippedInFileString = "temp-"+rand+".txt";
             
-        } catch(Exception e) {}
+            Path copyFromPath = FILE_SYSTEM.getPath(GZIPPED_NPIS_FILE_LOCAL);
+            Path copyToPath = FILE_SYSTEM.getPath(copyOfZippedInFileString);
+            
+            System.out.println("\tCopying FROM: " + copyFromPath.toString());
+            System.out.println("\tCopying TO: " + copyToPath.toString());
+            
+            Files.copy(copyFromPath, copyToPath, StandardCopyOption.REPLACE_EXISTING);
+
+            fis = new FileInputStream(copyOfZippedInFileString);
+            zippedInFile = new File(copyOfZippedInFileString);
+
+            if(zippedInFile.isFile()) {
+                // and a BufferedReader on top to comfortably read the file
+                br = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+                //InputStreamReader isr = new InputStreamReader(new GZIPInputStream(fis));
+                String line;
+                
+                System.out.println("\tReading GZipped NPI File that is " +(Files.size(copyToPath)/(1024.0*1024.0)) +" MiB." );
+                startRead = System.currentTimeMillis();
+                while((line = br.readLine()) != null) {
+                    npiList.add(Integer.parseInt(line));
+                }
+                if (npiList.isEmpty()){
+                    throw new Exception("\tList is Empty.");
+                    }
+                readTime = System.currentTimeMillis()-startRead;
+                System.out.println("\tDone Reading in the " + npiList.size()+" NPIs in " +readTime +"ms");
+
+                //sort the list
+                System.out.println("\tSorting ("+npiList.size()+" NPIs smallest to largest)");
+                startSort = System.currentTimeMillis();
+                npiList.sort(comparator);
+                sortTime = System.currentTimeMillis()-startSort;
+                System.out.println("\tDone Sorting the " + npiList.size()+" NPIs in " +sortTime +"ms");
+                
+                fis.close();
+                Files.delete(copyToPath);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+ 
+        long[] results = new long[2];
+        results[0] = readTime;
+        results[1] = sortTime;
+        
+        long stop = System.currentTimeMillis()-start;
+        System.err.println("\tEllapsed Time: "+stop);
+        System.out.println("\tDEBUG: ENDING openZippedNPIsWithIntegerObjects");
+        
+        return results;
     }
-    
+ 
     
     /**
+     * reads a plain text file's contents and sorts it
+     */
+    public static long[] openPlainTextNPIsWithIntegerObjects(){
+        System.out.println("DEBUG: Starting openPlainTextNPIsWithIntegerObjects");
+        long start = System.currentTimeMillis();
+        
+        NPIComparator comparator = new NPIComparator();
+        ArrayList<Integer> npiList = new ArrayList();
+        File inFile = null;
+        String copyOfInFileString = null;
+        BufferedReader br = null;
+        long startRead = 0; long readTime = 0; long startSort = 0; long sortTime = 0;
+
+            
+        try{
+            double rand = Math.random();
+            copyOfInFileString = "temp-"+rand+".txt";
+            
+            Path copyFromPath = FILE_SYSTEM.getPath(PLAINTEXT_NPIS_FILE_LOCAL);
+            Path copyToPath = FILE_SYSTEM.getPath(copyOfInFileString);
+            
+            System.out.println("\tCopying FROM: " + copyFromPath.toString());
+            System.out.println("\tCopying TO: " + copyToPath.toString());
+            
+            Files.copy(copyFromPath, copyToPath, StandardCopyOption.REPLACE_EXISTING);
+
+            inFile = new File(copyOfInFileString);
+            br = new BufferedReader(new FileReader(copyOfInFileString));
+            
+            if(inFile.isFile()) {
+                
+                String line;
+                System.out.println("\tReading Flat Text NPI File that is " +(Files.size(copyToPath)/(1024.0*1024.0)) +" MiB." );
+                startRead = System.currentTimeMillis();
+                while((line = br.readLine()) != null) {
+                    npiList.add(Integer.parseInt(line));
+                }
+                if (npiList.isEmpty()){
+                    throw new Exception("\tList is Empty.");
+                    }
+                readTime = System.currentTimeMillis()-startRead;
+                System.out.println("\tDone Reading in the " + npiList.size()+" NPIs in " +readTime +"ms");
+
+                //sort the list
+                System.out.println("\tSorting ("+npiList.size()+" NPIs smallest to largest)");
+                startSort = System.currentTimeMillis();
+                npiList.sort(comparator);
+                sortTime = System.currentTimeMillis()-startSort;
+                System.out.println("\tDone Sorting the " + npiList.size()+" NPIs in " +sortTime +"ms");
+                
+                br.close();
+                Files.delete(copyToPath);
+
+            } else {
+                throw new Exception("Cannot find file: \"" + GZIPPED_NPIS_FILE_LOCAL+ "\"");
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+         
+        long[] results = new long[2];
+        results[0] = readTime;
+        results[1] = sortTime;
+        
+        System.out.println("\tDEBUG: ENDING openPlainTextNPIsWithIntegerObjects");
+        System.err.println("\tEllapsed Time: "+(System.currentTimeMillis()-start));
+        return results;
+    }
+
+    
+    /**
+     * processes through the NPPES archive found here:
+     * http://download.cms.gov/nppes/NPI_Files.html
      * WARNING: >5GB csv file
      */
     private static void ingestNPIs(){        
@@ -212,9 +435,6 @@ public class UniqueNPIGenerator {
                 outFile.delete();
                 outFile.createNewFile();
             }
-
-            
-            
             
             lineIterator = FileUtils.lineIterator(inFile, "UTF-8");
 
@@ -231,6 +451,8 @@ public class UniqueNPIGenerator {
             LineIterator.closeQuietly(lineIterator);
         }
     }
+
+    
     
     /**
      * A column mapping for the CMS.gov NPI datafile. 
@@ -570,3 +792,4 @@ public class UniqueNPIGenerator {
     return mapping;
     }
 }
+
