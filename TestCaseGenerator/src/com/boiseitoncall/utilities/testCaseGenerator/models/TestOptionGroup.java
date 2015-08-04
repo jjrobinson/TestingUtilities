@@ -197,7 +197,7 @@ public class TestOptionGroup implements Cloneable {
      * @return int index
      * @throws Exception generic exception.
      */
-    public int getIndexOfLeastUsedOption() throws ArrayOutOfBoundsException {
+    public int getIndexOfLeastUsedOption() throws Exception {
         int leastUsedCount;
         int leastUsedIndex;
         if(this.options.size() == 0){

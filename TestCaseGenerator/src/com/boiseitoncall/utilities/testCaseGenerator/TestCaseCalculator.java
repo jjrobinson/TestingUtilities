@@ -186,7 +186,6 @@ public class TestCaseCalculator {
     private void recurseWithGroups(
             ArrayList<AspectOptionGroupItem> aspectOptionsGroupItemList, 
             ArrayList<TestAspect> testAspects, int placeHolder){
-
         this.recursiveCallsCounter++; // for debugging
         
         //check to see if we are at the end of the list of TestAspects
@@ -199,14 +198,20 @@ public class TestCaseCalculator {
                 ArrayList<AspectOptionGroupItem> newAOGIList = 
                         new ArrayList<AspectOptionGroupItem>();
                 newAOGIList.addAll(aspectOptionsGroupItemList);
-                
-                
-                
-                
+                recurseWithGroups(newAOGIList, testAspects, (placeHolder+1));
             }
-
         } else { // no more arrays to pop off
-            
+            ArrayList<String> options = new ArrayList<String>();
+            String s;
+            for(AspectOptionGroupItem item :aspectOptionsGroupItemList) {
+                try {
+                s = testAspects.get(item.getTestAspectNumber()).getOptionGroups()
+                        .get(item.getTestOptionGroupNumber()).getAndUseLeastUsedOption();
+                options.add(s);
+                } catch (Exception e) {}
+                }
+            TestCase tc = new TestCase(options);
+            this.smartTestCases.add(tc);
         }
         
     }//end recursive helper 
@@ -283,18 +288,5 @@ public class TestCaseCalculator {
         }
         return arrayOfArrays;
     }
-    
-    
-    private String getLeastUsedOption(TestOptionGroup tog){
-        String leastUsedOption = new String();
-        int leastUsedCount = 0;
-        for(int i =0; i< tog.getNumberOfOptions();i++){
-            
-        }
-        return 
-    }
-    
-
-    
     
 }//end of class
