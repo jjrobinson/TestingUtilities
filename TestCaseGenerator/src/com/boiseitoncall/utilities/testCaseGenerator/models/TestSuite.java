@@ -116,9 +116,9 @@ public class TestSuite {
 
     /**
      * Returns a list of TestAspects
-     * @return aspects List<TestAspect>
+     * @return aspects ArrayList<TestAspect>}
      */
-    public List<TestAspect> getAspects() {
+    public ArrayList<TestAspect> getAspects() {
         return this.aspects;
     }
 

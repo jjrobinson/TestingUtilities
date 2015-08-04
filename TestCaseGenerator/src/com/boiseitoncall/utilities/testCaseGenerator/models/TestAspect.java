@@ -99,8 +99,8 @@ public class TestAspect {
      * Returns a list of Options.
      * @return List options
      */
-    public List<TestOptionGroup> getOptionGroups() {
-        return this.optionGroups;
+    public ArrayList<TestOptionGroup> getOptionGroups() {
+        return new ArrayList<TestOptionGroup>(this.optionGroups);
     }
 
     /**

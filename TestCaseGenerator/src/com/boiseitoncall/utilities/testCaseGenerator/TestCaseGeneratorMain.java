@@ -61,6 +61,12 @@ public class TestCaseGeneratorMain {
         for (int i = 0 ; i < allTestCases.size(    ) ; i++) {
             System.out.println("ALL\tTest Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
         }
+        
+        ArrayList<TestAspect> aspects = testSuite.getAspects();
+        TestCaseCalculator tcc = new TestCaseCalculator(aspects);
+        
+        
+        
 /*
         //print to screen the SMART test cases list
         //Object has a toString() so we don't need to specify that this is actually a string object.

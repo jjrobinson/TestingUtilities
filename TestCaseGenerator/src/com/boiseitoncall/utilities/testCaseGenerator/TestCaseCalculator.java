@@ -4,6 +4,7 @@
  */
 package com.boiseitoncall.utilities.testCaseGenerator;
 
+import com.boiseitoncall.utilities.testCaseGenerator.models.AspectOptionGroupItem;
 import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
 import com.boiseitoncall.utilities.testCaseGenerator.models.TestCase;
 import com.boiseitoncall.utilities.testCaseGenerator.models.TestOptionGroup;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author JasonR
  */
 public class TestCaseCalculator {
-    private ArrayList<ArrayList<?>> aspectsList;
+    private ArrayList<TestAspect> aspectsList;
     private int recursiveCallsCounter;
     private int numAllTestCases;
     private int numSmartTestCases;
@@ -28,7 +29,7 @@ public class TestCaseCalculator {
      * Default constructor
      */
     public TestCaseCalculator(){
-        this.aspectsList = new ArrayList<ArrayList<?>>();
+        this.aspectsList = new ArrayList<TestAspect>();
         this.recursiveCallsCounter = 0;
         this.numAllTestCases = 0;
         this.numSmartTestCases = 0;
@@ -36,8 +37,11 @@ public class TestCaseCalculator {
         this.smartTestCases = new ArrayList<TestCase>();
     }
     
-
-    public TestCaseCalculator(ArrayList<ArrayList<?>> newTestAspects){
+    /**
+     * Constructor with {@code ArrayList<TestAspects>} provided
+     * @param newTestAspects 
+     */
+    public TestCaseCalculator(ArrayList<TestAspect> newTestAspects){
         this.aspectsList = newTestAspects;
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
@@ -46,11 +50,23 @@ public class TestCaseCalculator {
     }
     
     
+    /**
+     * Returns the list of AllTestCases
+     * @return {@code ArrayList<TestCase>}
+     */
+    public ArrayList<TestCase> getAllTestCases(){
+        this.computeAllTestCases();
+        return this.allTestCases;
+    }
     
-    
-    
-    
-    
+    /**
+     * Returns the list of SmartTestCases
+     * @return {@code ArrayList<TestCase>}
+     */
+    public ArrayList<TestCase> getSmartTestCases(){
+        this.computeSmartTestCases();
+        return this.smartTestCases;
+    }
     
     
 /////////////////////////////////////////////////////////////////////////////
@@ -98,25 +114,7 @@ public class TestCaseCalculator {
         //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
         this.numAllTestCases = this.allTestCases.size();
     }
-    
-    /**
-     * Computes the Smart Test Case list making use of TestOptionGroups
-     */
-    private void computeSmartTestCases(){
-        ArrayList<String> smartOptionsList = new ArrayList<String>();
-        ArrayList<ArrayList<String>> smartArrayOfArrays = buildArrayOfArrays();
-        
-        recursiveCallsCounter = 0;
-        recurseWithGroups(smartOptionsList, smartArrayOfArrays, 0);
-    
-        //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
-        //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
-        this.numSmartTestCases = this.smartTestCases.size();
-    }
-    
-    
-    
-
+ 
     /**
      * Recursive function to traverse an Array of Arrays.
      * 
@@ -156,46 +154,106 @@ public class TestCaseCalculator {
         
     }//end recursive helper 
 
+       
+    /**
+     * Computes the Smart Test Case list making use of @{code TestOptionGroup}
+     */
+    private void computeSmartTestCases(){
+        ArrayList<AspectOptionGroupItem> AOGIlist = 
+                new ArrayList<AspectOptionGroupItem>();
+        this.smartTestCases = new ArrayList<TestCase>();
+        
+        recursiveCallsCounter = 0; // just for debugging.
+        
+        recurseWithGroups(AOGIlist, this.aspectsList, 0);
+    
+        //System.out.println("Total Test Cases: " + this.getNumberOfAllTestCases());
+        //System.out.println("DEBUG: ENDING computeAllTestCases.\n\n");
+        this.numSmartTestCases = this.smartTestCases.size();
+    }
+    
     
     /**
-     * Recursive function to traverse Smart groups
+     * Recursive function to traverse each TestAspect's TestOptionGroup and 
+     * return a complete list of TestCases containing one item chosen from each
+     * TestOptionGroup.  
+     * Aspect's OptionGroups x Aspect's OptionGroups x etc.ww
      * 
-     * @param newOptionsList
-     * @param newAofA
+     * @param aspectOptionsGroupItemList
+     * @param testAspects
      * @param placeHolder 
      */
-    private void recurseWithGroups(ArrayList<String> newOptionsList, 
-        ArrayList<ArrayList<String>> newAofA, int placeHolder){
+    private void recurseWithGroups(
+            ArrayList<AspectOptionGroupItem> aspectOptionsGroupItemList, 
+            ArrayList<TestAspect> testAspects, int placeHolder){
+
+        this.recursiveCallsCounter++; // for debugging
         
-        //check to see if we are at the end of the AofA
-        if(placeHolder < newAofA.size()) {
-            //Get the next item in the ArrayOfArrays
-            ArrayList<String> currentAspectsOptions = newAofA.get(placeHolder);
-            
-            //iterate through the new TestAspect's Options
-            for(int i = 0 ; i < currentAspectsOptions.size();i++) {
-                //new Options List
-                ArrayList<String> newOptions = new ArrayList<String>();
+        //check to see if we are at the end of the list of TestAspects
+        if(placeHolder < testAspects.size()) {
+            //get the TestAspect for the current placeHolder
+            TestAspect ta = testAspects.get(placeHolder);
+            //save the TestOptionGroups for this TestAspect
+            ArrayList<TestOptionGroup> togList = ta.getOptionGroups();
+            for (int i=0 ; i< togList.size();i++) {
+                ArrayList<AspectOptionGroupItem> newAOGIList = 
+                        new ArrayList<AspectOptionGroupItem>();
+                newAOGIList.addAll(aspectOptionsGroupItemList);
                 
-                //iterate through and store a copy of the newOptionsList
-                for (int j=0 ; j < newOptionsList.size();j++) {
-                    newOptions.add(newOptionsList.get(j));
-                }
-                newOptions.add(currentAspectsOptions.get(i));
-                int newPlaceHolder = placeHolder + 1;
-                recurseIgnoringGroups(newOptions,newAofA, newPlaceHolder);
+                
+                
+                
             }
+
         } else { // no more arrays to pop off
             
-            TestCase tc = new TestCase();
-            for (int i=0; i < newOptionsList.size();i++){
-                tc.addTestOption(newOptionsList.get(i));
-                }
-            this.addToAllTestCase(tc);
         }
         
     }//end recursive helper 
 
+    
+    
+    private AspectOptionGroupItem makeNewAOGI(int aspectNum, String aspectName,
+            int optionNum, String optionName) throws Exception{
+        TestOptionGroup tog = null;
+        AspectOptionGroupItem AOGI = null;
+        
+        //throw an error if there aren't enoungh aspects
+        if(aspectNum > this.aspectsList.size()){
+            //a list of 3 items only has indexes 0, 1, 2
+            //TODO make a real exceptions instead of throwing generic Exception
+            throw new Exception("ERROR: AspectNum is higher than number of aspects.");
+        } 
+
+        TestAspect ta = this.aspectsList.get(aspectNum);
+        //sanity check on name + number
+        if (ta.getName().equalsIgnoreCase(aspectName)){
+            //sanity check on the TestOptionGroup
+            tog = ta.getOptionGroups().get(optionNum);
+            
+            if(tog.getName().equals(optionName)) {
+                //build the new AOGI
+                TestOptionGroup newTOG = null;
+                try {
+                    newTOG = (TestOptionGroup)tog.clone();
+                }catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+                AOGI = new AspectOptionGroupItem(
+                aspectNum, aspectName, optionNum,optionName,newTOG);
+            } else {
+                //oh no. number matched by name didn't.  bail out?
+                throw new Exception("ERROR: TestOptionGroup Number matched but the Name didn't.");
+            }
+        } else {
+            //oh no. number matched by name didn't.  bail out?
+            throw new Exception("ERROR: AspectNum matched but AspectName didn't.");
+        }
+        return AOGI;
+    }
+    
 
     /**
      * Builds a  simple array of Arrays
@@ -207,8 +265,8 @@ public class TestCaseCalculator {
         //System.out.println("\tDEBUG: in buildArrayOfArrays.");
         ArrayList<ArrayList<String>> arrayOfArrays = new ArrayList<ArrayList<String>>();
         
-        for (int i = 0; i<this.aspects.size();i++) {
-            TestAspect ta = this.aspects.get(i);
+        for (int i = 0; i<this.aspectsList.size();i++) {
+            TestAspect ta = this.aspectsList.get(i);
             ArrayList<String> allOptions = new ArrayList<String>();
             List<TestOptionGroup> groups = ta.getOptionGroups();
             
@@ -225,10 +283,18 @@ public class TestCaseCalculator {
         }
         return arrayOfArrays;
     }
+    
+    
+    private String getLeastUsedOption(TestOptionGroup tog){
+        String leastUsedOption = new String();
+        int leastUsedCount = 0;
+        for(int i =0; i< tog.getNumberOfOptions();i++){
+            
+        }
+        return 
+    }
+    
 
-        
     
     
-    
-
-}
+}//end of class

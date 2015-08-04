@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Jason Robinson
  */
-public class TestOptionGroup {
+public class TestOptionGroup implements Cloneable {
     private String name;
     private String description;
     private int numberOfOptions;
@@ -41,12 +41,40 @@ public class TestOptionGroup {
         this.usesCounter = new ArrayList<Integer>();
     }
 
+    
+
+    /**
+     * Override for clone from object class.  Returns a new object with identical 
+     * properties with deep copy cloning.
+     * @return 
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        String newName = new String(this.name);
+        String newDescription = new String(this.description);
+        List<String> newOptions = new ArrayList<String>();
+        for(String s:this.options)
+            newOptions.add(s);
+        List<Integer> newUsesCounter = new ArrayList<Integer>();
+        for(Integer i: this.usesCounter)
+            newUsesCounter.add(i);
+
+        
+        TestOptionGroup clonedTOG = (TestOptionGroup)super.clone();
+        
+        clonedTOG.setName(newName);
+        clonedTOG.setDescription(newDescription);
+        clonedTOG.setOptions(newOptions);
+        
+        return clonedTOG;
+    }
+    
     /**
      * returns the name
      * @return name String
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -62,7 +90,7 @@ public class TestOptionGroup {
      * @return String
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     /**
@@ -78,7 +106,7 @@ public class TestOptionGroup {
      * @return int
      */
     public int getNumberOfOptions() {
-        return numberOfOptions;
+        return this.numberOfOptions;
     }
 
     /**
@@ -101,7 +129,8 @@ public class TestOptionGroup {
         for(String o : newOptions) {
             addOption(o);
         }
-        setUses(newOptions.size());
+        resetUses(newOptions.size());
+        this.numberOfOptions = this.options.size();
     }
     
     /**
@@ -125,15 +154,15 @@ public class TestOptionGroup {
     }
     
     /**
-     * Returns the Option at a given index AND increments the "usesCounter" array for that
- option
+     * Returns the Option at a given index AND increments the "usesCounter" 
+     * array for that option
      * @param index 
      */
     public String useOption(int index){
         //is someoen trying to access an out of bounds address?
-        //HELP not sure how arrayList size works if some addresses are null
-        String option = "";
-        if(this.options.size() > index) {
+        String option;
+        //is index larger than the size of the list
+        if(this.options.size() < index) {
             return null;
         } else { // if not, proceed
             option = this.options.get(index);
@@ -152,17 +181,75 @@ public class TestOptionGroup {
             return 0;
         }
     }
+
+    
+    public String getAndUseLeastUsedOption() throws Exception {
+        return useOption(getIndexOfLeastUsedOption());
+    }
+    
+    
+
+    /**
+     * Returns the index of the option that has the least uses. If there is a tie,
+     * the first option will be returned, since options that tie are skipped.
+     * If the list has no items, null is returned.  If a list has only one item,
+     * then the index for that item is returned (which is also 0).
+     * @return int index
+     * @throws Exception generic exception.
+     */
+    public int getIndexOfLeastUsedOption() throws ArrayOutOfBoundsException {
+        int leastUsedCount;
+        int leastUsedIndex;
+        if(this.options.size() == 0){
+            throw new Exception("List is empty. Cannot return the index of item with the least uses.");
+        } else if (this.options.size() == 1){
+            leastUsedCount = this.usesCounter.get(0);
+            leastUsedIndex = 0;
+        }else {
+            leastUsedCount = this.usesCounter.get(0);
+            leastUsedIndex = 0;
+            int temp;
+            for (int i=0; i< this.options.size();i++){
+                temp = this.usesCounter.get(i);
+                if (leastUsedCount> temp) {
+                    leastUsedCount = temp;
+                    leastUsedIndex = i;
+                }
+            }
+        }
+        return leastUsedIndex;
+    }
+    
+    
+    /**
+     * Sets the TestGroupOption at the given index, if the list is large enough.
+     * Returns false if the list is not large enough to set the index.
+     * @param index int
+     * @param newOption String
+     * @return boolean success or failure
+     */
+    public boolean setOptionAtIndex(int index, String newOption){
+        if(index < this.options.size()){
+            this.options.set(index, newOption);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     
 
     /**
      * private method to reset all usesCounter of each option to zero
      *
      */
-    private void setUses(int size){
+    private void resetUses(int size){
         this.usesCounter = new ArrayList();
         for(int i=0; i< size ;i++) {
             this.usesCounter.add(i, 0);
         }
     }
-    //*/
+    
+    
+
 }
