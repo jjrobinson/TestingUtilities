@@ -152,10 +152,10 @@ public class TestAspect {
     }
 
 
-    /*
+    /**
      * Overrides the default ToString behavior. system agnostic newline
      * @return 
-     
+    */     
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
 
@@ -164,11 +164,13 @@ public class TestAspect {
         result.append(this.getClass().getName() + " Object {" + NEW_LINE);
         result.append("Aspect Name: " +this.getName() + NEW_LINE);
         //result.append("Aspect Description: " +this.getName() + NEW_LINE);
-        result.append("Number of Option Groups: " +this.getNumberOfOptionGroups() + NEW_LINE);
-        result.append("Option Names: ");
+        result.append("Number of Option Groups: ").append(this.getNumberOfOptionGroups())
+                .append(NEW_LINE);
+        result.append("Options: ").append(NEW_LINE);
         List options = new ArrayList(getOptionGroups());
         for (int i = 0 ; i < options.size() ; i++) {
-                result.append("\"" + options.get(i).toString() + "\", ");
+            result.append("\tOption ").append((1+i)).append(" ")
+                    .append(options.get(i).toString()).append(NEW_LINE);
         }
 
 
@@ -176,5 +178,4 @@ public class TestAspect {
 
         return result.toString(); //To change body of generated methods, choose Tools | Templates.
     }
-    */
 }

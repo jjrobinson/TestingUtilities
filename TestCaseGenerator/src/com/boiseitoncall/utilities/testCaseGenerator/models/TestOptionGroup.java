@@ -14,8 +14,8 @@ public class TestOptionGroup implements Cloneable {
     private String name;
     private String description;
     private int numberOfOptions;
-    private List<String> options;
-    private List<Integer> usesCounter;
+    private ArrayList<String> options;
+    private ArrayList<Integer> usesCounter;
 
 
     /**
@@ -250,6 +250,23 @@ public class TestOptionGroup implements Cloneable {
         }
     }
     
-    
+    /**
+     * Override the default object toString for better looking output
+     * @return 
+     */
+    @Override
+    public String toString(){
+        String NEW_LINE = System.getProperty("line.separator");
+        StringBuilder sb = new StringBuilder();
+        sb.append("TestOptionGroup").append(NEW_LINE);
+        sb.append("\tName: ").append(this.name).append(NEW_LINE);
+        sb.append("\tDescription: ").append(this.description).append(NEW_LINE);
+        sb.append("\tOptions: {");
+        for(String s: this.options){
+            sb.append(" [").append(s).append("]");
+        }
+        sb.append("}").append(NEW_LINE);
+        return sb.toString();
+    }
 
 }

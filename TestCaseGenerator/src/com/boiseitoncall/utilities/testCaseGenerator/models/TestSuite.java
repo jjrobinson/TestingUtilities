@@ -6,6 +6,7 @@
 package com.boiseitoncall.utilities.testCaseGenerator.models;
 
 
+import com.boiseitoncall.utilities.testCaseGenerator.TestCaseCalculator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,79 +73,12 @@ public class TestSuite {
 
     
     /**
-     * returns the name of the TestSuite
-     * @return name String
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Sets the TestSuite's name
-     * @param name String
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Returns the description of this TestSuite
-     * @return name String
-     */
-    public String getDescription() {
-        return this.desc;
-    }
-
-    /**
-     * Sets the description of this TestSuite
-     * @param desc 
-     */
-    public void setDescription(String desc) {
-        this.desc = desc;
-    }
-    
-
-
-    public int getNumAllTestCases() {
-        return this.numAllTestCases;
-    }
-
-    public int getNumSmartTestCases() {
-        return this.numSmartTestCases;
-    }
-  
-
-    /**
-     * Returns a list of TestAspects
-     * @return aspects ArrayList<TestAspect>}
-     */
-    public ArrayList<TestAspect> getAspects() {
-        return this.aspects;
-    }
-
-
-    /**
-     * Returns the allTestCases list in this TestSuite
-     * @return TestCase {@literal <testCase>}
-     */
-    public ArrayList<TestCase> getAllTestCases() {
-        return this.allTestCases;
-    }
-
-    /**
-     * Returns the smartTestCases list in this TestSuite
-     * @return TestCase {@literal <testCase>}
-     */
-    public ArrayList<TestCase> getSmartTestCases() {
-        return this.smartTestCases;
-    }
-
-    /**
      * Sets the allTestCases list in this TestSuite
      * @return TestCase {@literal <testCase>}
      */
     public void setAllTestCases(ArrayList<TestCase> newAllTestCases) {
-        this.allTestCases = newAllTestCases;
+        this.allTestCases.clear();
+        this.allTestCases.addAll(newAllTestCases);
         this.numAllTestCases = this.allTestCases.size();
     }
 
@@ -153,13 +87,14 @@ public class TestSuite {
      * @return TestCase {@literal <testCase>}
      */
     public void setSmartTestCases(ArrayList<TestCase> newSmartTestCases) {
-        this.smartTestCases = newSmartTestCases;
+        this.smartTestCases.clear();
+        this.smartTestCases.addAll(newSmartTestCases);
         this.numSmartTestCases = this.smartTestCases.size();
     }
 
     /**
      * Adds a single TestCase to the allTestCases list
-     * @param a {@literal <TestCase>} a TestCase
+     * @param a {@code <TestCase>} a TestCase
      * @return boolean true if anything was added, false for everything else
      */
     private boolean addToAllTestCase(TestCase aTestCase) {
@@ -174,7 +109,7 @@ public class TestSuite {
 
     /**
      * Adds a single TestCase to the smartTestCases list and sets the 
-     * @param a {@literal <TestCase>} a TestCase
+     * @param a {@code <TestCase>} a TestCase
      * @return boolean true if anything was added, false for everything else
      */
     private boolean addToSmartTestCase(TestCase aTestCase) {
@@ -188,7 +123,7 @@ public class TestSuite {
     
 
     /**
-     * Adds a TestAspect to the TestSuite, increments the Aspect counter,
+     * Adds a TestAspect to the TestSuite, AND increments the Aspect counter,
      * computes all the new TestCases as a result of the new combinations provided.
      * 
      * Test case computation is accomplished via the private method computeAllTestCases
@@ -201,7 +136,16 @@ public class TestSuite {
             int oldCountOfAspects = this.numTestAspects;
             this.aspects.add(newAspect);
             this.numTestAspects = this.aspects.size();
-            this.allTestCases = new ArrayList<TestCase>();
+
+            this.allTestCases.clear();
+            this.smartTestCases.clear();
+            
+            TestCaseCalculator tcc = new TestCaseCalculator(this.aspects);
+            //System.out.println("DEBUG: In TestSuite.addAspect() adding " +newAspect.getName());
+
+            this.setAllTestCases(tcc.getAllTestCases());
+            this.setSmartTestCases(tcc.getSmartTestCases());
+            
             
             //sanity check to make sure we incremented the # of testAspects
             if(oldCountOfAspects != this.numTestAspects)
@@ -212,25 +156,20 @@ public class TestSuite {
         
     
     /**
-     * Adds one or more TestAspects to the TestSuite AND increments the Aspect counter
-     * @param newAspects List of <code>TestAspect</code>'s and must not be null
+     * Adds one or more TestAspects to the TestSuite using addAspect method.
+     * @param newAspectsList List of <code>TestAspect</code>'s and must not be null
      */
-    public boolean addAspects(List<TestAspect> newAspects)
+    public boolean addAspects(List<TestAspect> newAspectsList)
     {
-        if(newAspects != null)
+        boolean success_tracker = false;
+        if(newAspectsList != null)
         {
-            int tmpCount = this.numTestAspects;
-            if (newAspects.size() == 1)
-                addAspect(newAspects.get(0));//if there is only one, call the normal addAspect
-            this.aspects.addAll(newAspects);//if there are several aspects being added, add them all
-            this.numTestAspects = aspects.size();
-            this.allTestCases = new ArrayList<TestCase>();
-            
-            //sanity check to make sure we incremented the # of testAspects
-            if(tmpCount != this.numTestAspects)
-                return true;
+            for (TestAspect ta : newAspectsList) {
+                if(addAspect(ta))
+                    success_tracker = true;
+            }
         }
-        return false;
+        return success_tracker;
     }
 
         /**
@@ -339,4 +278,84 @@ public class TestSuite {
     public int getNumberOfSmartTestCases(){
         return this.numSmartTestCases;
     }
+
+    
+    /**
+     * returns the name of the TestSuite
+     * @return name String
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Sets the TestSuite's name
+     * @param name String
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the description of this TestSuite
+     * @return name String
+     */
+    public String getDescription() { 
+        return this.desc;
+    }
+
+    /**
+     * Sets the description of this TestSuite
+     * @param desc 
+     */
+    public void setDescription(String desc) {
+        this.desc = desc;
+    }
+    
+
+
+    /**
+     * Returns the number of AllTestCases
+     * @return 
+     */
+    public int getNumAllTestCases() {
+        return this.numAllTestCases;
+    }
+
+
+    /**
+     * Returns the number of SmartTestCases
+     * @return 
+     */
+    public int getNumSmartTestCases() {
+        return this.numSmartTestCases;
+    }
+  
+
+    /**
+     * Returns a list of TestAspects
+     * @return aspects ArrayList<TestAspect>}
+     */
+    public ArrayList<TestAspect> getAspects() {
+        return this.aspects;
+    }
+
+
+    /**
+     * Returns the allTestCases list in this TestSuite
+     * @return TestCase {@literal <testCase>}
+     */
+    public ArrayList<TestCase> getAllTestCases() {
+        return this.allTestCases;
+    }
+
+    /**
+     * Returns the smartTestCases list in this TestSuite
+     * @return TestCase {@literal <testCase>}
+     */
+    public ArrayList<TestCase> getSmartTestCases() {
+        return this.smartTestCases;
+    }
+
+    
 }

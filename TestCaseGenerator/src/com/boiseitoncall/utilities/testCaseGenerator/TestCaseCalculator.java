@@ -42,11 +42,18 @@ public class TestCaseCalculator {
      * @param newTestAspects 
      */
     public TestCaseCalculator(ArrayList<TestAspect> newTestAspects){
-        this.aspectsList = newTestAspects;
+        this.aspectsList = new ArrayList<TestAspect>();
+        this.recursiveCallsCounter = 0;
+        this.numAllTestCases = 0;
+        this.numSmartTestCases = 0;
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
-        this.computeAllTestCases();
-        this.computeSmartTestCases();
+
+        this.aspectsList = newTestAspects;
+        this.allTestCases.clear();
+        this.smartTestCases.clear();
+//        this.computeAllTestCases();
+//        this.computeSmartTestCases();
     }
     
     
@@ -55,6 +62,7 @@ public class TestCaseCalculator {
      * @return {@code ArrayList<TestCase>}
      */
     public ArrayList<TestCase> getAllTestCases(){
+        this.allTestCases.clear();
         this.computeAllTestCases();
         return this.allTestCases;
     }
@@ -64,6 +72,7 @@ public class TestCaseCalculator {
      * @return {@code ArrayList<TestCase>}
      */
     public ArrayList<TestCase> getSmartTestCases(){
+        this.smartTestCases.clear();
         this.computeSmartTestCases();
         return this.smartTestCases;
     }
@@ -99,7 +108,7 @@ public class TestCaseCalculator {
     
     
     /**
-     * Computes the unique combinations 
+     * Computes the unique combinations ignoring {@code TestOptionGroup} efficiencies
      */
     private void computeAllTestCases() {
         //System.out.println("DEBUG: Starting computeAllTestCases.");
@@ -156,12 +165,13 @@ public class TestCaseCalculator {
 
        
     /**
-     * Computes the Smart Test Case list making use of @{code TestOptionGroup}
+     * Computes the Smart Test Case list making use of {@code TestOptionGroup}
      */
     private void computeSmartTestCases(){
+        //System.out.println("DEBUG: In computeSmartTestCases");
         ArrayList<AspectOptionGroupItem> AOGIlist = 
                 new ArrayList<AspectOptionGroupItem>();
-        this.smartTestCases = new ArrayList<TestCase>();
+        this.smartTestCases.clear();
         
         recursiveCallsCounter = 0; // just for debugging.
         
@@ -179,14 +189,20 @@ public class TestCaseCalculator {
      * TestOptionGroup.  
      * Aspect's OptionGroups x Aspect's OptionGroups x etc.ww
      * 
-     * @param aspectOptionsGroupItemList
+     * @param AOGIList
      * @param testAspects
      * @param placeHolder 
      */
     private void recurseWithGroups(
-            ArrayList<AspectOptionGroupItem> aspectOptionsGroupItemList, 
+            ArrayList<AspectOptionGroupItem> AOGIList, 
             ArrayList<TestAspect> testAspects, int placeHolder){
         this.recursiveCallsCounter++; // for debugging
+//        System.out.println("DEBUG: In recurseWithGroups(). Call #"+recursiveCallsCounter);
+//        System.out.println("DEBUG: placeHolder: " + placeHolder);
+//        System.out.println("DEBUG: AOGIList Size: " +AOGIList.size());
+//        for(int i=0;i< AOGIList.size();i++) {
+//            System.out.println("DEBUG: AOGIList Item #"+i +" " +AOGIList.get(i).toString());
+//        }
         
         //check to see if we are at the end of the list of TestAspects
         if(placeHolder < testAspects.size()) {
@@ -197,13 +213,20 @@ public class TestCaseCalculator {
             for (int i=0 ; i< togList.size();i++) {
                 ArrayList<AspectOptionGroupItem> newAOGIList = 
                         new ArrayList<AspectOptionGroupItem>();
-                newAOGIList.addAll(aspectOptionsGroupItemList);
+                newAOGIList.addAll(AOGIList);
+                TestOptionGroup tog = togList.get(i);
+
+                //create a new GroupItem for the AOGIList
+                AspectOptionGroupItem newAOGI = new AspectOptionGroupItem(
+                        placeHolder, this.aspectsList.get(placeHolder).getName(),
+                        i,togList.get(i).getName(),togList.get(i));
+                newAOGIList.add(newAOGI);
                 recurseWithGroups(newAOGIList, testAspects, (placeHolder+1));
             }
         } else { // no more arrays to pop off
             ArrayList<String> options = new ArrayList<String>();
             String s;
-            for(AspectOptionGroupItem item :aspectOptionsGroupItemList) {
+            for(AspectOptionGroupItem item :AOGIList) {
                 try {
                 s = testAspects.get(item.getTestAspectNumber()).getOptionGroups()
                         .get(item.getTestOptionGroupNumber()).getAndUseLeastUsedOption();

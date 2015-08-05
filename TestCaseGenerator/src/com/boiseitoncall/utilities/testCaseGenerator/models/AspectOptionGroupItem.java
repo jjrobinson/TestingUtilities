@@ -4,11 +4,14 @@
  */
 package com.boiseitoncall.utilities.testCaseGenerator.models;
 
+import java.util.List;
+
 /**
  *
  * @author JasonRobinson
  */
 public class AspectOptionGroupItem {
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private int testAspectNumber;
     private String testAspectName;
     private int testOptionGroupNumber;
@@ -41,7 +44,23 @@ public class AspectOptionGroupItem {
         this.tog = tog;
     }
     
-    
+    /**
+     * Overrides the default object toString method to provide better output
+     * @return 
+     */
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Aspect: ").append(this.testAspectName).append(" #")
+                .append(this.testAspectNumber).append(" - Group: ")
+                .append(this.testOptionGroupName).append(" #")
+                .append(this.testOptionGroupNumber).append(NEW_LINE);
+        List<String> options = this.tog.getOptions();
+        for (int i=0; i< options.size();i++) {
+            sb.append("\t").append(options.get(i)).append(NEW_LINE);
+        }
+        return sb.toString();
+    }
     
     public int getTestAspectNumber() {
         return testAspectNumber;
