@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Jason Robinson
  */
-public class TestCase {
+public class TestCase implements Cloneable {
     private ArrayList<String> testOptions;
     private int numberOfTestOptions;
 
@@ -34,6 +34,19 @@ public class TestCase {
         this.numberOfTestOptions = 0;
     }
 
+    /**
+     * Over ride of the Object.clone() method.
+     * @return 
+     */
+    @Override
+    public Object clone()throws CloneNotSupportedException {
+        ArrayList<String> newOptions = new ArrayList<String>();
+        for(String s: this.testOptions)
+            newOptions.add(s);
+        TestCase tc = (TestCase)super.clone();
+        tc.setTestOptions(newOptions);
+        return tc;
+    }
     
     /**
      * Returns a list of the test variables (strings)
@@ -44,11 +57,13 @@ public class TestCase {
     }
 
     /**
-     * Sets the TestCase's list of Options
+     * Sets the TestCase's list of Options to the provided list, deleting all 
+     * previous options.
      * @param testOptions 
      */
     public void setTestOptions(ArrayList<String> testOptions) {
-        this.testOptions = testOptions;
+        this.testOptions.clear();
+        this.testOptions.addAll(testOptions);
         this.numberOfTestOptions = this.testOptions.size();
     }
     
