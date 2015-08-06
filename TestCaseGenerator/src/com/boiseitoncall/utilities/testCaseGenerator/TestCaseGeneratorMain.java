@@ -54,29 +54,19 @@ public class TestCaseGeneratorMain {
         System.out.println("TestSuite.toString(): ");
         System.out.println(testSuite.toString());
 
-        //print to screen the ALL test cases list
-        //Object has a toString() so we don't need to specify that this is actually a string object.
-        System.out.println("All Possible Test Cases: " + testSuite.getNumberOfAllTestCases());
-        ArrayList<TestCase> allTestCases = testSuite.getAllTestCases();
-        for (int i = 0 ; i < allTestCases.size(    ) ; i++) {
-            System.out.println("ALL\tTest Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
-        }
-/*
-        //print to screen the SMART test cases list
-        //Object has a toString() so we don't need to specify that this is actually a string object.
-        System.out.println("\n\nSmart Test Cases: " + testSuite.getNumberOfSmartTestCases());
+        
+        System.out.println("Smart Test Cases: " + testSuite.getNumberOfSmartTestCases());
         ArrayList<TestCase> smartTestCases = testSuite.getSmartTestCases();
         for (int i = 0 ; i < smartTestCases.size(    ) ; i++) {
             System.out.println("SMART\tTest Case #" + (i+1) + ": " + smartTestCases.get(i).getTestOptions().toString());
         }
+
         
-        */
-        
-        /*
-        for (ArrayList testCase : testSuite.getAllTestCases()) {
-            System.out.println("Test Case #" + testCase.index + testCase.getTestOptions().toString());
-        }*/
-        
+        System.out.println("ALL Test Cases: " + testSuite.getNumberOfAllTestCases());
+        ArrayList<TestCase> allTestCases = testSuite.getAllTestCases();
+        for (int i = 0 ; i < allTestCases.size(    ) ; i++) {
+            System.out.println("ALL\tTest Case #" + (i+1) + ": " + allTestCases.get(i).getTestOptions().toString());
+        }
     }//end main(Args)
 
     /**
@@ -160,7 +150,7 @@ public class TestCaseGeneratorMain {
             ta1.setName("Procedures");
                 TestOptionGroup tog1 = new TestOptionGroup();
                     tog1.setName("Non-Modified");
-                    tog1.setOptions(Arrays.asList("H2000", "H2011", "H2032", "97537"));
+                    tog1.setOptions(Arrays.asList("H2000", "H2032", "97537", "H2011"));
                 TestOptionGroup tog2 = new TestOptionGroup();
                     tog2.setName("Modifed");
                     tog2.addOption("H2011 HM");
@@ -199,24 +189,6 @@ public class TestCaseGeneratorMain {
                     tog8.setOptions(Arrays.asList("Not Found"));
             ta4.addOptionGroup(tog6); ta4.addOptionGroup(tog7); ta4.addOptionGroup(tog8);
         ts.addAspect(ta4);
-
-        
-        
-        /*
-        //quick output
-        System.out.println("HARDCODED: Adding TestAspect: " +ta2.getName() +" with \"" +ta2.getOptionGroups().size() +"\" OptionGroups");
-            for(TestOptionGroup tog: ta2.getOptionGroups()) {
-                System.out.println("HARDCODED\tOptionGroup \""+tog.getName() +"\" Contains Options: \"" +tog.getOptions().toString()+"\"");
-            }
-        System.out.println();
-        
-
-        System.out.println("DEBUG: HARDCODED: All Test Cases:");
-        for (int i=0; i< tests.size(); i++) {
-            TestCase tc = tests.get(i);
-            System.out.println("\tTest #" + (i+1) + tc.getTestOptions().toString());
-        }
-        */
         
         return ts;
     } // end of hard coded method
