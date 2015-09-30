@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 
 
 
-public class UniqueNPIGenerator {
+public class UniqueNPIGenMain {
     
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String FILE_PATH_ROOT_DIR = "c:\\dev\\test\\interfaces\\";
@@ -40,7 +41,8 @@ public class UniqueNPIGenerator {
     private static final String GZIPPED_NPIS_FILE_LOCAL = FILE_PATH_ROOT_DIR+"complete_npi_list.txt.gz";
     private static final String PLAINTEXT_NPIS_FILE_LOCAL = FILE_PATH_ROOT_DIR+"complete_npi_list.txt";
     private static final String CONNECTION_STRING_FILE = FILE_PATH_ROOT_DIR+"jtds_connection_string-UAT01-ENV01.txt";
-    private static final String QUERY_STRING_FILE = FILE_PATH_ROOT_DIR+"query_string.txt";
+    //private static final String QUERY_STRING_FILE = FILE_PATH_ROOT_DIR+"query_string.txt";
+    private static final String QUERY_STRING_FILE = "C:\\dev\\src\\sql\\_Daily.Checks.sql";
     private static final FileSystem FILE_SYSTEM = FileSystems.getDefault();
 
     private static ArrayList<Long> ZIPPED_RUNS_FILEIO_LIST = new ArrayList<Long>();
@@ -70,19 +72,22 @@ public class UniqueNPIGenerator {
 
 
         //run the tests X times
-        runTests(10);
+        //runTests(10);
         
         //print out the results
-        printResults();
-/*
+        //printResults();
+
         String connectionString = getConnectionString();
         String queryString = getQueryString();
 
         System.out.println("Connection String: \"" + connectionString + "\"");
         System.out.println("Query String: \"" + queryString + "\"");
         
-        connectToDB(connectionString, queryString);
-        */
+        connectAndExecuteQuery(connectionString, queryString);
+        
+        
+        
+        
         
         
         /*
@@ -203,11 +208,20 @@ public class UniqueNPIGenerator {
         
         LineIterator lineIterator = null;
         File inFile = new File(QUERY_STRING_FILE);
-        String returnString = null;
+        StringBuilder sb = new StringBuilder();
         try {
-            lineIterator = FileUtils.lineIterator(inFile, "UTF-8");
+            Reader reader = new FileReader(QUERY_STRING_FILE);
+            BufferedReader br = new BufferedReader(reader);
 
-            returnString = lineIterator.nextLine();
+            
+            
+            
+            /*
+            lineIterator = FileUtils.lineIterator(inFile, "UTF-8");
+            while(lineIterator.hasNext()){
+                sb.append(lineIterator.nextLine()).append(NEW_LINE);
+            }
+            */
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -215,7 +229,7 @@ public class UniqueNPIGenerator {
             LineIterator.closeQuietly(lineIterator);
             
         }
-        return returnString;
+        return sb.toString();
     }
      
     
@@ -224,7 +238,7 @@ public class UniqueNPIGenerator {
      * @param connectionUrl
      * @param query 
      */
-    private static void connectToDB(String connectionUrl, String query){
+    private static void connectAndExecuteQuery(String connectionUrl, String query){
       // Declare the connection objects.
       Connection con = null;
       Statement stmt = null;
@@ -236,8 +250,15 @@ public class UniqueNPIGenerator {
             Class.forName("net.sourceforge.jtds.jdbc.JtdsConnection");
             con = DriverManager.getConnection(connectionUrl);
 
+            
+            ScriptRunner sr = new ScriptRunner(con,false,true);
+            
+                        
+            sr.setErrorLogWriter(null);
+            
             // Create and execute an SQL statement that returns some data.
-            stmt = con.createStatement();
+            //stmt = con.createStatement();
+            stmt.executeUpdate(query);
             rs = stmt.executeQuery(query);
             rsmd = rs.getMetaData();
             int numColumns = rsmd.getColumnCount();
