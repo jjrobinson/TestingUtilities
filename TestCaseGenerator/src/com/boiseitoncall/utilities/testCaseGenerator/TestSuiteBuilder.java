@@ -6,6 +6,7 @@ import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import javax.management.RuntimeErrorException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,45 +25,58 @@ public class TestSuiteBuilder {
      * @throws Exception e
      * @return TestSuite 
      */
-    public TestSuite createTestSuiteCmdLine() throws Exception{
-        this.builderType = "command line";
+    public TestSuite createTestSuiteCmdLine(boolean createTestSuiteCmdLine, 
+            boolean isIgnoreGroupsEnabled) throws Exception {
+
+        if(createTestSuiteCmdLine)
+            this.builderType = "command line";
+
         int numberOfTestAspects = 0;
-        //to get FindBugs to stop complaining about DM_DEFAULT_ENCODING, providing the encoding type
-        
-        try{
-            BufferedReader console = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+            if(builderType.equalsIgnoreCase("command line")) {
+                //LARGE BLOCK BELOW
+try{//try block for command line IO
+    //to get FindBugs to stop complaining about DM_DEFAULT_ENCODING, providing the encoding type
+    BufferedReader console = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
 
-            testSuite = new TestSuite();
+    testSuite = new TestSuite();
+    testSuite.setIgnoreGroups(isIgnoreGroupsEnabled);
 
 
-            //enter a name
-            testSuite.setName(getAStringCmdLine(console, 
-                    "Enter a NAME for this Test Suite",""));
+    //enter a name
+    testSuite.setName(getAStringCmdLine(console, 
+            "Enter a NAME for this Test Suite",""));
 
-            //enter a description
-            testSuite.setDescription(getAStringCmdLine(console, 
-                    "Enter a DESCRIPTION for this Test Suite",""));
+    //enter a description
+    testSuite.setDescription(getAStringCmdLine(console, 
+            "Enter a DESCRIPTION for this Test Suite",""));
 
-            //initial prompt to get number of TestAspects
-            numberOfTestAspects = getAPositiveNumber(console,0, 
-                    "Enter the NUMBER of different Aspects to be tested");
+    //initial prompt to get number of TestAspects
+    numberOfTestAspects = getAPositiveNumber(console,0, 
+            "Enter the NUMBER of different Aspects to be tested");
 
-            for (int i = 0 ; i< numberOfTestAspects ; i++)
-            {
-                String num = String.valueOf(i+1);
-                try { System.out.println(
-                        FigletFont.convertOneLine("Aspect    #" + num)); 
-                } catch(Exception e) {
-                throw e;}
+    for (int i = 0 ; i< numberOfTestAspects ; i++)
+    {
+        String num = String.valueOf(i+1);
+        try { System.out.println(
+                FigletFont.convertOneLine("Aspect    #" + num)); 
+        } catch(Exception e) {
+        throw e;}
 
-                testSuite.addAspect(getTestAspectCmdLine(console, num));
+        testSuite.addAspect(getTestAspectCmdLine(console, num));
+    }
+
+
+} catch (Exception e) {
+    //can't read from console, so throw an error and quit
+    throw new RuntimeErrorException(new Error());
+}
+            //END LARGE BLOCK ABOVE
+            //end of commandline entry
+        } else {
+            //TODO enable other ways to create a TestSuite
             }
-            return testSuite;
-        
-        } catch (Exception e) {
-            //can't read from console, so throw an error and quit
-            throw new RuntimeErrorException(new Error());
-        }
+            
+    return testSuite;
     }// end of createTestSuite
     
 
@@ -115,9 +129,13 @@ public class TestSuiteBuilder {
    /////  P R I V A T E   M E T H O D S   B E L O W  ///////////////////////////
    /////////////////////////////////////////////////////////////////////////////
     /**
-     * Prompts user via command line for the properties of the TestAspect
+     * Prompts user via command line for the properties of the TestAspect.  Allows
+     * the user to create a TestAspect with a single default group, or by 
+     * specifying the number of groups to create.
+     * 
      * @throws Exception for output via FigletFont
      * @param r
+     * @param ignorGroups boolean
      * @param num String
      * @return 
      */
@@ -130,29 +148,37 @@ public class TestSuiteBuilder {
         //enter an aspect's name
         newAspect.setName(getAStringCmdLine(
                 r, "\tEnter a NAME for test aspect ",num));
-        
+                
         
         //enter an aspect's description
         newAspect.setDescription(getAStringCmdLine(
                 r, "\tEnter a DESCRIPTION for test aspect ",num));
         
-        //get the number of TestOptionGroups
-        StringBuilder sb = new StringBuilder();
-        sb.append("Enter the NUMBER of TestOption Groups for TestAspect ")
-                .append(num);
-        numberOfOptionGroups = getAPositiveNumber(r, 1, sb.toString());
+        //are we ignoring TestOptionGroups?  If not, proceed
+        if(!this.testSuite.isIgnoreGroups()) {
+            //get the number of TestOptionGroups
+            StringBuilder sb = new StringBuilder();
+            sb.append("Enter the NUMBER of TestOption Groups for TestAspect ")
+                    .append(num);
+            numberOfOptionGroups = getAPositiveNumber(r, 1, sb.toString());
 
-        //fill in the details of each option group
-        for (int i=0;i< numberOfOptionGroups; i++) {
-            
-            //banner for the new OptionGroup
-            try { System.out.println(
-                FigletFont.convertOneLine("        Option Group    #"+(i+1))); 
-            } catch(Exception e) { throw e;}
+            //fill in the details of each option group
+            for (int i=0;i< numberOfOptionGroups; i++) {
 
-            //prompt to fill in each option group
+                //banner for the new OptionGroup
+                try { System.out.println(
+                    FigletFont.convertOneLine("        Option Group    #"+(i+1))); 
+                } catch(Exception e) { throw e;}
+
+                //prompt to fill in each option group
+                newAspect.addOptionGroup(getTestOptionGroupCmdLine(r, 
+                        String.valueOf(i),"",""));
+            }
+        //are we ignoring TestOptionGroups?  If so, proceed below
+        } else {
             newAspect.addOptionGroup(getTestOptionGroupCmdLine(r, 
-                    String.valueOf(i)));
+                    String.valueOf(1),newAspect.getName(),
+                    newAspect.getDescription()));
         }
 
         return newAspect;
@@ -161,48 +187,74 @@ public class TestSuiteBuilder {
    
     /**
      * Prompts to fill in the information for a TestOptionGroup. 
-     * ONLY called by getTestAspectCmdLine
+     * ONLY called by getTestAspectCmdLine. Allows creating a default group with
+     * out prompting the user if operating in "ignoreGroups" mode
      * 
      * @param r BufferedReader
+     * @param aspectName String
+     * @param aspectDesc String
      * @param optionGroupNumber int
      * @return TestOptionGroup tog
      */
     private TestOptionGroup getTestOptionGroupCmdLine(BufferedReader r, 
-            String num) throws Exception {
+            String num, String aspectName, String aspectDesc) throws Exception {
         int numberOfOptions = 0;
+        TestOptionGroup tog = null;
         int groupNumber = Integer.parseInt(num)+1;
         String groupNumberAsString = String.valueOf(groupNumber);
-        
-        //enter a name
-        String name = getAStringCmdLine(r, 
-                "\t\tEnter a NAME for Test Option Group ", groupNumberAsString);
-        
-        //enter a description
-        String desc = getAStringCmdLine(r, 
-                "\t\tEnter a DESCRIPTION for the Test Option Group ", 
-                groupNumberAsString);
-        TestOptionGroup tog = new TestOptionGroup(name, desc);
 
-        
-        //fill in the details of each option group
+        if(!this.testSuite.isIgnoreGroups()) {
+            //enter a name
+            String groupName = getAStringCmdLine(r, 
+                    "\t\tEnter a NAME for Test Option Group ", groupNumberAsString);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Enter the NUMBER of different Options in TestOptionGroup \"")
-                .append(name).append("\"");
+            //enter a description
+            String desc = getAStringCmdLine(r, 
+                    "\t\tEnter a DESCRIPTION for the Test Option Group ", 
+                    groupNumberAsString);
+            tog = new TestOptionGroup(groupName, desc);
 
-        numberOfOptions = getAPositiveNumber(r, 2, sb.toString());
+            //fill in the details of each option group
+            StringBuilder sb = new StringBuilder();
+            sb.append("Enter the NUMBER of different Options in TestOptionGroup \"")
+                    .append(groupName).append("\"");
+
+            numberOfOptions = getAPositiveNumber(r, 2, sb.toString());
 
 
-        //now we have the name, desc, and number of options in this group
-        //time to fill in the options
-        for(int i=0; i<numberOfOptions;i++) {
-            StringBuilder s = new StringBuilder();
-            s.append("\t\t\tEnter a value for OptionGroup ").append(groupNumber)
-                    .append(": \"").append(name).append("\" - Option #")
-                    .append((i+1));
-            tog.addOption(getAStringCmdLine(r,s.toString(),""));
+            //now we have the name, desc, and number of options in this group
+            //time to fill in the options
+            for(int i=0; i<numberOfOptions;i++) {
+                StringBuilder s = new StringBuilder();
+                s.append("\t\t\tEnter a value for OptionGroup ").append(groupNumber)
+                        .append(": \"").append(groupName).append("\" - Option #")
+                        .append((i+1));
+                tog.addOption(getAStringCmdLine(r,s.toString(),""));
+            }
+        //end if NOT ignoring groups
+        } else {
+            //what to do if we ARE ignoring groups
+            tog = new TestOptionGroup();
+            tog.setName(aspectName); tog.setDescription(aspectDesc);
+
+            //fill in the details of the default option group
+            StringBuilder sb = new StringBuilder();
+            sb.append("Enter the NUMBER of different Options in this TestAspect: \"")
+                    .append(aspectName).append("\"");
+
+            numberOfOptions = getAPositiveNumber(r, 2, sb.toString());
+
+
+            //now we have the name, desc, and number of options in this group
+            //time to fill in the options
+            for(int i=0; i<numberOfOptions;i++) {
+                StringBuilder s = new StringBuilder();
+                s.append("\t\t\tEnter a value for TestAspect \"").
+                        append(aspectName).append("\" - Option #").append((i+1));
+                tog.addOption(getAStringCmdLine(r,s.toString(),""));
+            }
+
         }
-
         return tog;
     }
     
@@ -266,4 +318,10 @@ public class TestSuiteBuilder {
         return theNumber;
 
     }
+    
+
+    
+    
+    
+    
 }//end of class

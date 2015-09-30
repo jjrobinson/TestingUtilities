@@ -22,7 +22,7 @@ public class TestCaseCalculator {
     private int numSmartTestCases;
     private ArrayList<TestCase> allTestCases;
     private ArrayList<TestCase> smartTestCases;
-
+    private boolean ignoreGroups;
 
     
     /**
@@ -35,10 +35,11 @@ public class TestCaseCalculator {
         this.numSmartTestCases = 0;
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
+        this.ignoreGroups = false;
     }
     
     /**
-     * Constructor with {@code ArrayList<TestAspects>} provided
+     * Incomplete constructor with {@code ArrayList<TestAspects>} provided
      * @param newTestAspects 
      */
     public TestCaseCalculator(ArrayList<TestAspect> newTestAspects){
@@ -48,6 +49,7 @@ public class TestCaseCalculator {
         this.numSmartTestCases = 0;
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
+        this.ignoreGroups = false;
 
         this.aspectsList = newTestAspects;
         this.allTestCases.clear();
@@ -73,8 +75,12 @@ public class TestCaseCalculator {
      */
     public ArrayList<TestCase> getSmartTestCases(){
         this.smartTestCases.clear();
-        this.computeSmartTestCases();
-        return this.smartTestCases;
+        if (!this.ignoreGroups) {
+            computeSmartTestCases();
+            return this.smartTestCases;
+        } else {
+            return this.smartTestCases;
+        }
     }
     
     
@@ -311,5 +317,26 @@ public class TestCaseCalculator {
         }
         return arrayOfArrays;
     }
+
+    
+    /**
+     * returns if this TestSuite is ignoring groups
+     * @return 
+     */
+    public boolean isIgnoreGroups() {
+        return ignoreGroups;
+    }
+
+    /**
+     * sets if this TestSuite is ignoring groups or not.
+     * @param ignoreGroups boolean
+     */
+    public void setIgnoreGroups(boolean ignoreGroups) {
+        this.ignoreGroups = ignoreGroups;
+    }
+
+
+    
+    
     
 }//end of class

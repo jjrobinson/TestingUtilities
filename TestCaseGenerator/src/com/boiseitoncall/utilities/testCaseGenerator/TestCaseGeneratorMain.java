@@ -33,10 +33,14 @@ public class TestCaseGeneratorMain {
       */
         printUsageCmdLine();
         boolean demo = false;
+        boolean ignoreGroups = false;
         if (args != null) {
             for (String s : args) {
                 if (s.equalsIgnoreCase("demo")) {
                     demo = true;
+                }
+                if (s.equalsIgnoreCase("ignoreGroups")) {
+                    ignoreGroups = true;
                 }
             }
             if (demo) {
@@ -44,7 +48,7 @@ public class TestCaseGeneratorMain {
                 testSuite = callHardCodedVersion();
             } else {
                 //Call to function to get all user input
-                testSuite = getInputCmdLine();
+                testSuite = getInputCmdLine(ignoreGroups);
             }
         }
         
@@ -107,14 +111,14 @@ public class TestCaseGeneratorMain {
 	 * TestSuite object
      * @return TestSuite
      */
-    public static TestSuite getInputCmdLine() {
+    public static TestSuite getInputCmdLine(boolean ignoreGroups) {
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
         try{
             BobTheBuilder.displayBannerCmdLine();
 
         //fill in all the aspects
-        testSuite = BobTheBuilder.createTestSuiteCmdLine();
+        testSuite = BobTheBuilder.createTestSuiteCmdLine(true, ignoreGroups);
         }catch (Exception e) { e.printStackTrace();}
 
         //List testCases = new ArrayList(ComputeTestCases(testSuite));
