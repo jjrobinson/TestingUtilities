@@ -147,10 +147,11 @@ public class TestSuite {
             this.smartTestCases.clear();
             
             TestCaseCalculator tcc = new TestCaseCalculator(this.aspects);
+            tcc.setIgnoreGroups(this.ignoreGroups);
             //System.out.println("DEBUG: In TestSuite.addAspect() adding " +newAspect.getName());
 
             this.setAllTestCases(tcc.getAllTestCases());
-            this.setSmartTestCases(tcc.getSmartTestCases());
+            if (!this.ignoreGroups) this.setSmartTestCases(tcc.getSmartTestCases());
             
             
             //sanity check to make sure we incremented the # of testAspects
@@ -226,6 +227,10 @@ public class TestSuite {
                 .append(NEW_LINE);
         result.append("TestSuite Description: \"").append(this.getDescription())
                 .append("\"").append(NEW_LINE);
+        if(this.ignoreGroups)
+            result.append("This TestSuite IS Ignoring Groups.").append(NEW_LINE);
+        else
+            result.append("This TestSuite IS NOT Ignoring Groups.").append(NEW_LINE);
         result.append("Number of TestAspects: \"").append(this.getNumTestAspects())
                 .append("\"").append(NEW_LINE);
         result.append("TestAspects: ").append(NEW_LINE).append("{");
