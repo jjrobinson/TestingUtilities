@@ -23,7 +23,8 @@ public class TestSuite {
     private ArrayList<TestCase> smartTestCases;
     private int numAllTestCases;
     private int numSmartTestCases;
-    
+    private boolean ignoreGroups;
+ 
     /**
      * Default constructor
      * 
@@ -35,6 +36,7 @@ public class TestSuite {
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
         this.aspects = new ArrayList<TestAspect>();
+        this.ignoreGroups = false;
     }
 
     /**
@@ -51,6 +53,7 @@ public class TestSuite {
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
         this.aspects = new ArrayList<TestAspect>();
+        this.ignoreGroups = false;
     }
 
     /**
@@ -62,13 +65,16 @@ public class TestSuite {
      * @param newAspects List<TestAspect> list of TestAspect objects
      * @param numTestAspects int count of test aspects
      */
-    public TestSuite(String name, String desc, ArrayList<TestAspect> newAspects) {
+    public TestSuite(String name, String desc, 
+            ArrayList<TestAspect> newAspects,
+            boolean ignoreGroupsStatus) {
         this.name = name;
         this.desc = desc;
         this.aspects = newAspects;
         this.numTestAspects = this.aspects.size();
         this.allTestCases = new ArrayList<TestCase>();
         this.smartTestCases = new ArrayList<TestCase>();
+        this.ignoreGroups = ignoreGroupsStatus;
     }
 
     
@@ -231,27 +237,42 @@ public class TestSuite {
                     ta.getName()).append("\"").append(NEW_LINE);
             result.append("\tAspect #").append(num).append(" Description: \"").
                     append(ta.getDescription()).append("\"").append(NEW_LINE);
-            result.append("\tAspect #").append(num).append(" OptionGroups: ").
+            ArrayList<TestOptionGroup> togs = ta.getOptionGroups();
+
+            
+            if(!this.isIgnoreGroups()) {
+                result.append("\tAspect #").append(num).append(" OptionGroups: ").
                     append(NEW_LINE).append("\t{").append(NEW_LINE);
-            List<TestOptionGroup> togs = ta.getOptionGroups();
+                for (int j=0;j<togs.size();j++) {
+                    String num2 = String.valueOf(j+1);
+                    result.append("\t\tOption Group #").append(num2).append(": Name: \"")
+                            .append(togs.get(j).getName()).append("\"").append(NEW_LINE);
+                    result.append("\t\tOption Group #").append(num2).append(": Description: \"")
+                            .append(togs.get(j).getDescription()).append("\"").append(NEW_LINE);
+                    result.append("\t\tOption Group #").append(num2).append(": Options: ")
+                            .append(NEW_LINE).append("\t\t{").append(NEW_LINE);
+                    List<String> options = togs.get(j).getOptions();
 
-            for (int j=0;j<togs.size();j++) {
-                String num2 = String.valueOf(j+1);
-                result.append("\t\tOption Group #").append(num2).append(": Name: \"")
-                        .append(togs.get(j).getName()).append("\"").append(NEW_LINE);
-                result.append("\t\tOption Group #").append(num2).append(": Description: \"")
-                        .append(togs.get(j).getDescription()).append("\"").append(NEW_LINE);
-                result.append("\t\tOption Group #").append(num2).append(": Options: ")
-                        .append(NEW_LINE).append("\t\t{").append(NEW_LINE);
-                List<String> options = togs.get(j).getOptions();
-
-                for (int k=0; k< options.size();k++) {
-                    String num3 = String.valueOf(k+1);
-                    result.append("\t\t\tOption #").append(num3).append(": \"")
-                            .append(options.get(k)).append("\"").append(NEW_LINE);
-                }
-                result.append("\t\t}").append(NEW_LINE);
+                    for (int k=0; k< options.size();k++) {
+                        String num3 = String.valueOf(k+1);
+                        result.append("\t\t\tOption #").append(num3).append(": \"")
+                                .append(options.get(k)).append("\"").append(NEW_LINE);
+                    }
+                    result.append("\t\t}").append(NEW_LINE);
+                }//end of OptionGroups
+            } else { //if NOT using groups
+                result.append("\tAspect #").append(num).
+                    append(NEW_LINE).append("\t{").append(NEW_LINE);
+                if(togs.size() ==1) {//just a doublecheck
+                    List<String> options = togs.get(0).getOptions();
+                    for (int k=0; k< options.size();k++) {
+                        String num3 = String.valueOf(k+1);
+                        result.append("\t\tOption #").append(num3).append(": \"")
+                                .append(options.get(k)).append("\"").append(NEW_LINE);
+                    }
+                }//end of the double check
             }
+            
             result.append("\t}").append(NEW_LINE);
         }
 
@@ -357,5 +378,21 @@ public class TestSuite {
         return this.smartTestCases;
     }
 
-    
+
+    /**
+     * Returns if this TestSuite is going to ignore groups or not
+     * @return boolean
+     */
+    public boolean isIgnoreGroups() {
+        return ignoreGroups;
+    }
+
+    /**
+     * Sets if this test group is going to ignore groups
+     * @param ignoreGroups boolean
+     */
+    public void setIgnoreGroups(boolean ignoreGroups) {
+        this.ignoreGroups = ignoreGroups;
+    }
+       
 }
