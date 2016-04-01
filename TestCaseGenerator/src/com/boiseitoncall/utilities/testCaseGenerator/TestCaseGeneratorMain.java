@@ -125,7 +125,7 @@ public class TestCaseGeneratorMain {
             testSuiteWriter.newLine();
             testSuiteWriter.close();
             
-            if(smartTestCases.size() > 0){
+            if(smartTestCases.size() > 0 && smartTestCases.size() < allTestCases.size()){
                 smartFileName.append("SmartTestCases-").append(timeStamp).append(".csv");
                 
                 File smartFile = new File(smartFileName.toString());
@@ -330,148 +330,130 @@ public class TestCaseGeneratorMain {
      * @return TestSuite ts
      */
     public static TestSuite callHardCodedVersion2() {
-
-        /*
-        Non-Modified: "H2000", "H2032", "97537", "H2011"
-        Modified: "H2011 HM"
+        TestSuite ts2 = new TestSuite();
+        ts2.setName("Dual Enrollment Behavior Modifications");
+        ts2.setDescription("Complete enumeration of functionality changes for complementary health coverage plans.");
         
-        SECONDARY "14", "15", "17", 
-        PRIMARY "41", "42", "43", "51", "52", "54", "56", "83", "85"
+            TestAspect ts2_ta1 = new TestAspect();
+            ts2_ta1.setName("Death Date");
+            ts2_ta1.setDescription("Does the member have a Date Of Death?");
+                TestOptionGroup ts2_ta1_tog1a = new TestOptionGroup();
+                    ts2_ta1_tog1a.setName("TRUE");
+                    ts2_ta1_tog1a.setOptions(Arrays.asList("TRUE"));
+                TestOptionGroup ts2_ta1_tog1b = new TestOptionGroup();
+                    ts2_ta1_tog1b.setName("FALSE");
+                    ts2_ta1_tog1b.addOption("FALSE");
+            ts2_ta1.addOptionGroup(ts2_ta1_tog1a);ts2_ta1.addOptionGroup(ts2_ta1_tog1b);
+        ts2.addAspect(ts2_ta1);
+
+            TestAspect ts2_ta2 = new TestAspect();
+            ts2_ta2.setName("Has Medicaid");
+            ts2_ta2.setDescription("Does the member have Medicaid?");
+                TestOptionGroup ts2_ta2_tog2a = new TestOptionGroup();
+                    ts2_ta2_tog2a.setName("TRUE");
+                    ts2_ta2_tog2a.setOptions(Arrays.asList("TRUE"));
+                TestOptionGroup ts2_ta2_tog2b = new TestOptionGroup();
+                    ts2_ta2_tog2b.setName("FALSE");
+                    ts2_ta2_tog2b.setOptions(Arrays.asList("FALSE"));
+            ts2_ta2.addOptionGroup(ts2_ta2_tog2a);ts2_ta2.addOptionGroup(ts2_ta2_tog2b);
+        ts2.addAspect(ts2_ta2);
+
+            TestAspect ts2_ta3 = new TestAspect();
+            ts2_ta3.setName("Has Medicare");
+            ts2_ta3.setDescription("Does the member have Medicare? If so, which? (None,A,B,Both)");
+                TestOptionGroup ts2_ta2_tog3a = new TestOptionGroup();
+                    ts2_ta2_tog3a.setName("None");
+                    ts2_ta2_tog3a.setOptions(Arrays.asList("None"));
+                TestOptionGroup ts2_ta2_tog3b = new TestOptionGroup();
+                    ts2_ta2_tog3b.setName("A");
+                    ts2_ta2_tog3b.setOptions(Arrays.asList("A"));
+                TestOptionGroup ts2_ta2_tog3c = new TestOptionGroup();
+                    ts2_ta2_tog3c.setName("B");
+                    ts2_ta2_tog3c.setOptions(Arrays.asList("B"));
+                TestOptionGroup ts2_ta2_tog3d = new TestOptionGroup();
+                    ts2_ta2_tog3d.setName("Both");
+                    ts2_ta2_tog3d.setOptions(Arrays.asList("Both"));
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3a); ts2_ta3.addOptionGroup(ts2_ta2_tog3b); ts2_ta3.addOptionGroup(ts2_ta2_tog3c);
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3d);
+        ts2.addAspect(ts2_ta3);
+
+
+            TestAspect ts2_ta4 = new TestAspect();
+            ts2_ta4.setName("Has Medicare BuyIns");
+            ts2_ta4.setDescription("Does the member have Medicare BuyIns? If so, which? (None,A,B,Both)");
+                TestOptionGroup ts2_ta2_tog4a = new TestOptionGroup();
+                    ts2_ta2_tog4a.setName("None");
+                    ts2_ta2_tog4a.setOptions(Arrays.asList("None"));
+                TestOptionGroup ts2_ta2_tog4b = new TestOptionGroup();
+                    ts2_ta2_tog4b.setName("A");
+                    ts2_ta2_tog4b.setOptions(Arrays.asList("A"));
+                TestOptionGroup ts2_ta2_tog4c = new TestOptionGroup();
+                    ts2_ta2_tog4c.setName("B");
+                    ts2_ta2_tog4c.setOptions(Arrays.asList("B"));
+                TestOptionGroup ts2_ta2_tog4d = new TestOptionGroup();
+                    ts2_ta2_tog4d.setName("Both");
+                    ts2_ta2_tog4d.setOptions(Arrays.asList("Both"));
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4a); ts2_ta4.addOptionGroup(ts2_ta2_tog4b); ts2_ta4.addOptionGroup(ts2_ta2_tog4c);
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4d);
+        ts2.addAspect(ts2_ta4);
+
+
+            TestAspect ts2_ta5 = new TestAspect();
+            ts2_ta5.setName("Medicare Terms");
+            ts2_ta5.setDescription("Has the member's Medicare coverage termed? If so, which? (None,A,B,Both)");
+                TestOptionGroup ts2_ta2_tog5a = new TestOptionGroup();
+                    ts2_ta2_tog5a.setName("None");
+                    ts2_ta2_tog5a.setOptions(Arrays.asList("None"));
+                TestOptionGroup ts2_ta2_tog5b = new TestOptionGroup();
+                    ts2_ta2_tog5b.setName("A");
+                    ts2_ta2_tog5b.setOptions(Arrays.asList("A"));
+                TestOptionGroup ts2_ta2_tog5c = new TestOptionGroup();
+                    ts2_ta2_tog5c.setName("B");
+                    ts2_ta2_tog5c.setOptions(Arrays.asList("B"));
+                TestOptionGroup ts2_ta2_tog5d = new TestOptionGroup();
+                    ts2_ta2_tog5d.setName("Both");
+                    ts2_ta2_tog5d.setOptions(Arrays.asList("Both"));
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5a); ts2_ta5.addOptionGroup(ts2_ta2_tog5b); ts2_ta5.addOptionGroup(ts2_ta2_tog5c);
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5d);
+        ts2.addAspect(ts2_ta5);
+
+
+            TestAspect ts2_ta6 = new TestAspect();
+            ts2_ta6.setName("Term Dates Match");
+            ts2_ta6.setDescription("Do the member's Medicare term dates match? How? (Yes,N/A,No: A<B, No: B<A");
+                TestOptionGroup ts2_ta2_tog6a = new TestOptionGroup();
+                    ts2_ta2_tog6a.setName("Yes");
+                    ts2_ta2_tog6a.setOptions(Arrays.asList("Yes"));
+                TestOptionGroup ts2_ta2_tog6b = new TestOptionGroup();
+                    ts2_ta2_tog6b.setName("N/A");
+                    ts2_ta2_tog6b.setOptions(Arrays.asList("N/A"));
+                TestOptionGroup ts2_ta2_tog6c = new TestOptionGroup();
+                    ts2_ta2_tog6c.setName("No: A<B");
+                    ts2_ta2_tog6c.setOptions(Arrays.asList("No: A<B"));
+                TestOptionGroup ts2_ta2_tog6d = new TestOptionGroup();
+                    ts2_ta2_tog6d.setName("No: B<A");
+                    ts2_ta2_tog6d.setOptions(Arrays.asList("No: B<A"));
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6a); ts2_ta6.addOptionGroup(ts2_ta2_tog6b); ts2_ta6.addOptionGroup(ts2_ta2_tog6c);
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6d);
+        ts2.addAspect(ts2_ta6);
+
+
+            TestAspect ts2_ta7 = new TestAspect();
+            ts2_ta7.setName("Are Term Dates <=31days apart");
+            ts2_ta7.setDescription("Are the term dates <= 31 days apart? How? (No,Yes,N/A)");
+                TestOptionGroup ts2_ta2_tog7a = new TestOptionGroup();
+                    ts2_ta2_tog7a.setName("No");
+                    ts2_ta2_tog7a.setOptions(Arrays.asList("No"));
+                TestOptionGroup ts2_ta2_tog7b = new TestOptionGroup();
+                    ts2_ta2_tog7b.setName("N/A");
+                    ts2_ta2_tog7b.setOptions(Arrays.asList("N/A"));
+                TestOptionGroup ts2_ta2_tog7c = new TestOptionGroup();
+                    ts2_ta2_tog7c.setName("Yes");
+                    ts2_ta2_tog7c.setOptions(Arrays.asList("Yes"));
+            ts2_ta7.addOptionGroup(ts2_ta2_tog7a); ts2_ta7.addOptionGroup(ts2_ta2_tog7b); ts2_ta7.addOptionGroup(ts2_ta2_tog7c);
+        ts2.addAspect(ts2_ta7);
         
-        "Prospective", "Member","Non-Member"
-        CURENT: "current single", "current multi-procedure"
-        FUTURE: "future single", "future multi-procedure"
-        NOTFOUND "not found"
-        */
-        TestSuite ts = new TestSuite();
-        ts.setName("CMS BuyIn Modifications - Requirement 7");
-        ts.setDescription("Complete enumeration of functionality changes due to the Requirement 7 conditions.");
-        
-            TestAspect ta1 = new TestAspect();
-            ta1.setName("Death Date");
-            ta1.setDescription("Does the member have a Date Of Death?");
-                TestOptionGroup tog1a = new TestOptionGroup();
-                    tog1a.setName("TRUE");
-                    tog1a.setOptions(Arrays.asList("TRUE"));
-                TestOptionGroup tog1b = new TestOptionGroup();
-                    tog1b.setName("FALSE");
-                    tog1b.addOption("FALSE");
-            ta1.addOptionGroup(tog1a);ta1.addOptionGroup(tog1b);
-        ts.addAspect(ta1);
-
-            TestAspect ta2 = new TestAspect();
-            ta2.setName("Has Medicaid");
-            ta2.setDescription("Does the member have Medicaid?");
-                TestOptionGroup tog2a = new TestOptionGroup();
-                    tog2a.setName("TRUE");
-                    tog2a.setOptions(Arrays.asList("TRUE"));
-                TestOptionGroup tog2b = new TestOptionGroup();
-                    tog2b.setName("FALSE");
-                    tog2b.setOptions(Arrays.asList("FALSE"));
-            ta2.addOptionGroup(tog2b);ta2.addOptionGroup(tog2b);
-        ts.addAspect(ta2);
-
-            TestAspect ta3 = new TestAspect();
-            ta3.setName("Has Medicare");
-            ta3.setDescription("Does the member have Medicare? If so, which? (None,A,B,Both)");
-                TestOptionGroup tog3a = new TestOptionGroup();
-                    tog3a.setName("None");
-                    tog3a.setOptions(Arrays.asList("None"));
-                TestOptionGroup tog3b = new TestOptionGroup();
-                    tog3b.setName("A");
-                    tog3b.setOptions(Arrays.asList("A"));
-                TestOptionGroup tog3c = new TestOptionGroup();
-                    tog3c.setName("B");
-                    tog3c.setOptions(Arrays.asList("B"));
-                TestOptionGroup tog3d = new TestOptionGroup();
-                    tog3d.setName("Both");
-                    tog3d.setOptions(Arrays.asList("Both"));
-            ta3.addOptionGroup(tog3a); ta3.addOptionGroup(tog3b); ta3.addOptionGroup(tog3c);
-            ta3.addOptionGroup(tog3d);
-        ts.addAspect(ta3);
-
-
-            TestAspect ta4 = new TestAspect();
-            ta4.setName("Has Medicare BuyIns");
-            ta4.setDescription("Does the member have Medicare BuyIns? If so, which? (None,A,B,Both)");
-                TestOptionGroup tog4a = new TestOptionGroup();
-                    tog4a.setName("None");
-                    tog4a.setOptions(Arrays.asList("None"));
-                TestOptionGroup tog4b = new TestOptionGroup();
-                    tog4b.setName("A");
-                    tog4b.setOptions(Arrays.asList("A"));
-                TestOptionGroup tog4c = new TestOptionGroup();
-                    tog4c.setName("B");
-                    tog4c.setOptions(Arrays.asList("B"));
-                TestOptionGroup tog4d = new TestOptionGroup();
-                    tog4d.setName("Both");
-                    tog4d.setOptions(Arrays.asList("Both"));
-            ta4.addOptionGroup(tog4a); ta4.addOptionGroup(tog4b); ta4.addOptionGroup(tog4c);
-            ta4.addOptionGroup(tog4d);
-        ts.addAspect(ta4);
-
-
-            TestAspect ta5 = new TestAspect();
-            ta5.setName("Medicare Terms");
-            ta5.setDescription("Has the member's Medicare coverage termed? If so, which? (None,A,B,Both)");
-                TestOptionGroup tog5a = new TestOptionGroup();
-                    tog5a.setName("None");
-                    tog5a.setOptions(Arrays.asList("None"));
-                TestOptionGroup tog5b = new TestOptionGroup();
-                    tog5b.setName("A");
-                    tog5b.setOptions(Arrays.asList("A"));
-                TestOptionGroup tog5c = new TestOptionGroup();
-                    tog5c.setName("B");
-                    tog5c.setOptions(Arrays.asList("B"));
-                TestOptionGroup tog5d = new TestOptionGroup();
-                    tog5d.setName("Both");
-                    tog5d.setOptions(Arrays.asList("Both"));
-            ta5.addOptionGroup(tog5a); ta5.addOptionGroup(tog5b); ta5.addOptionGroup(tog5c);
-            ta5.addOptionGroup(tog5d);
-        ts.addAspect(ta5);
-
-
-            TestAspect ta6 = new TestAspect();
-            ta6.setName("Term Dates Match");
-            ta6.setDescription("Do the member's Medicare term dates match? How? (Yes,N/A,No: A<B, No: B<A");
-                TestOptionGroup tog6a = new TestOptionGroup();
-                    tog6a.setName("Yes");
-                    tog6a.setOptions(Arrays.asList("Yes"));
-                TestOptionGroup tog6b = new TestOptionGroup();
-                    tog6b.setName("N/A");
-                    tog6b.setOptions(Arrays.asList("N/A"));
-                TestOptionGroup tog6c = new TestOptionGroup();
-                    tog6c.setName("No: A<B");
-                    tog6c.setOptions(Arrays.asList("No: A<B"));
-                TestOptionGroup tog6d = new TestOptionGroup();
-                    tog6d.setName("No: B<A");
-                    tog6d.setOptions(Arrays.asList("No: B<A"));
-            ta6.addOptionGroup(tog6a); ta6.addOptionGroup(tog6b); ta6.addOptionGroup(tog6c);
-            ta6.addOptionGroup(tog6d);
-        ts.addAspect(ta6);
-
-
-            TestAspect ta7 = new TestAspect();
-            ta7.setName("Are Term Dates <=31days apart");
-            ta7.setDescription("Do the member's Medicare term dates match? How? (No,N/A,Yes: A<B,Yes: B<A");
-                TestOptionGroup tog7a = new TestOptionGroup();
-                    tog7a.setName("No");
-                    tog7a.setOptions(Arrays.asList("No"));
-                TestOptionGroup tog7b = new TestOptionGroup();
-                    tog7b.setName("N/A");
-                    tog7b.setOptions(Arrays.asList("N/A"));
-                TestOptionGroup tog7c = new TestOptionGroup();
-                    tog7c.setName("Yes: A<B");
-                    tog7c.setOptions(Arrays.asList("Yes: A<B"));
-                TestOptionGroup tog7d = new TestOptionGroup();
-                    tog7d.setName("Yes: B<A");
-                    tog7d.setOptions(Arrays.asList("Yes: B<A"));
-            ta7.addOptionGroup(tog7a); ta7.addOptionGroup(tog7b); ta7.addOptionGroup(tog7c);
-            ta7.addOptionGroup(tog7d);
-        ts.addAspect(ta7);
-        
-        return ts;
-    } // end of hard coded method
+        return ts2;    } // end of hard coded method
     
     
 }//end class
