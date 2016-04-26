@@ -1,8 +1,8 @@
-package com.boiseitoncall.utilities.testCaseGenerator;
+package org.jjrobinson.utilities.testCaseGenerator;
 
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestOptionGroup;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestAspect;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

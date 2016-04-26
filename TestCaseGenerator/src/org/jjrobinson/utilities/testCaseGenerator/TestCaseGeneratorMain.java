@@ -1,9 +1,9 @@
-package com.boiseitoncall.utilities.testCaseGenerator;
+package org.jjrobinson.utilities.testCaseGenerator;
 
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestCase;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestOptionGroup;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestAspect;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestCase;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -43,20 +43,34 @@ public class TestCaseGeneratorMain {
         boolean demo2 = false;
         boolean ignoreGroups = false;
         boolean saveToFile = false;
+        boolean silent = false;
+        boolean foundArg = false;
         if (args != null) {
             for (String s : args) {
-                if (s.equalsIgnoreCase("demo")) {
+                foundArg = false;//reset the foundArg flag
+                if (s.equalsIgnoreCase("-demo")) {
                     demo = true;
+                    foundArg = true;
                 }
-                if (s.equalsIgnoreCase("demo2")) {
+                if (s.equalsIgnoreCase("-demo2")) {
                     demo2 = true;
+                    foundArg = true;
                 }
-                if (s.equalsIgnoreCase("ignoreGroups")) {
+                if (s.equalsIgnoreCase("-ignoreGroups")) {
                     ignoreGroups = true;
+                    foundArg = true;
                 }
-                
-                if (s.equalsIgnoreCase("saveToFile")) {
+                if (s.equalsIgnoreCase("-saveToFile")) {
                     saveToFile = true;
+                    foundArg = true;
+                }
+                if (s.equalsIgnoreCase("-silent")) {
+                    silent = true;
+                    foundArg = true;
+                }
+                if (!s.isEmpty() && !foundArg) {
+                    System.err.println("ERROR: Unknown command line argument: " + s);
+                    System.exit(-1);
                 }
             }
             if (demo) {
@@ -72,12 +86,14 @@ public class TestCaseGeneratorMain {
         }
         
 
-        System.out.println("TestSuite.toString(): ");
-        System.out.println(testSuite.toString());
+        if(!silent) {
+            System.out.println("TestSuite.toString(): ");
+            System.out.println(testSuite.toString());
 
-        //print everything to the screen
-        printTestCasesCmdLine(testSuite);
-        
+            //print everything to the screen
+            printTestCasesCmdLine(testSuite);
+        }//end non-silent print to screen
+
         if(saveToFile){
             saveTestCasesToFile(testSuite);
         }
@@ -215,18 +231,35 @@ public class TestCaseGeneratorMain {
      *Prints a usage statement at the top of each run.
      */
     public static void printUsageCmdLine(){
-        System.out.println("Test Case Generator.");
-        System.out.println("Example: To test 2D CGI shapes we have 1) border color "
-				+ "2) Number of Sides 3) fill color .... " + NEW_LINE + "Which is 3 different aspects.");
-        System.out.println("For our 3 Aspects:");
-        System.out.println("\tAspect #1 Options (Border Color): black, brown, blue = "
-				+ "3 different border colors.");
-        System.out.println("\tAspect #2 Options (Number of Sides): 3 (triangle), 4, "
-				+ "(rectangle), 5 (pentagon) = 3 different shapes.");
-        System.out.println("\tAspect #3 Options (Fill Colors): red, green, yellow = "
-				+ "3 different fill colors.");
-        System.out.println("\tTotal Test Cases: #BorderColors x #Sides x #FillColors "
-				+ "= 3 x 3 x 3 = 27" + NEW_LINE + "");
+        StringBuilder sb = new StringBuilder();
+        sb.append("TestCaseGenerator.jar:").append(NEW_LINE).append("USAGE:").append(NEW_LINE);
+        sb.append("Options:").append(NEW_LINE).append("\t\"-demo\": "
+                + "hard coded 900 test case demo").append(NEW_LINE);
+        sb.append("\t\"-demo2\": hard coded 24,576 test case demo. WARNING LARGE 1MB csv file").append(NEW_LINE);
+        sb.append("\t\"-ignoreGroups\": turns off functional grouping for "
+                + "simple input").append(NEW_LINE);
+        sb.append("\t\"-saveToFile\": turns on saving TestSuite, SmartTestCases, "
+                + "& AllTestCases to text files. Test Cases saved in .csv while"
+                + "TestSuite saved in JSON-esque format.").append(NEW_LINE);
+        sb.append("\t\"-silent\": turns on silent printing, skipping all screen "
+                + "output after ingest").append(NEW_LINE).append(NEW_LINE);
+        
+        
+        sb.append("Example: To test 2D CGI shapes we have 1) border color "
+                + "2) Number of Sides 3) fill color .... " + NEW_LINE 
+                + "Which is 3 different aspects.").append(NEW_LINE);
+        sb.append("For our 3 Aspects:").append(NEW_LINE);
+        sb.append("\tAspect #1 Options (Border Color): black, brown, blue = "
+                + "3 different border colors.").append(NEW_LINE);
+        sb.append("\tAspect #2 Options (Number of Sides): 3 (triangle), 4, "
+		+ "(rectangle), 5 (pentagon) = 3 different shapes.");
+        sb.append("\tAspect #3 Options (Fill Colors): red, green, yellow = "
+		+ "3 different fill colors.").append(NEW_LINE);
+        sb.append("\tTotal Test Cases: #BorderColors x #Sides x #FillColors "
+                + "= 3 x 3 x 3 = 27").append(NEW_LINE).append(NEW_LINE);
+        sb.append("Type:").append(NEW_LINE).append("java -jar TestCaseGenerator -silent -saveToFile")
+                .append(NEW_LINE).append(NEW_LINE);
+        System.out.println(sb.toString());
     }
     
     
@@ -373,8 +406,10 @@ public class TestCaseGeneratorMain {
                 TestOptionGroup ts2_ta2_tog3d = new TestOptionGroup();
                     ts2_ta2_tog3d.setName("Both");
                     ts2_ta2_tog3d.setOptions(Arrays.asList("Both"));
-            ts2_ta3.addOptionGroup(ts2_ta2_tog3a); ts2_ta3.addOptionGroup(ts2_ta2_tog3b); ts2_ta3.addOptionGroup(ts2_ta2_tog3c);
-            ts2_ta3.addOptionGroup(ts2_ta2_tog3d);
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3a);//none
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3b);//A
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3c);//B
+            ts2_ta3.addOptionGroup(ts2_ta2_tog3d);//Both
         ts2.addAspect(ts2_ta3);
 
 
@@ -393,8 +428,10 @@ public class TestCaseGeneratorMain {
                 TestOptionGroup ts2_ta2_tog4d = new TestOptionGroup();
                     ts2_ta2_tog4d.setName("Both");
                     ts2_ta2_tog4d.setOptions(Arrays.asList("Both"));
-            ts2_ta4.addOptionGroup(ts2_ta2_tog4a); ts2_ta4.addOptionGroup(ts2_ta2_tog4b); ts2_ta4.addOptionGroup(ts2_ta2_tog4c);
-            ts2_ta4.addOptionGroup(ts2_ta2_tog4d);
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4a);//none
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4b);//BuyIn A
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4c);//BuyIn B
+            ts2_ta4.addOptionGroup(ts2_ta2_tog4d);//Both
         ts2.addAspect(ts2_ta4);
 
 
@@ -413,9 +450,50 @@ public class TestCaseGeneratorMain {
                 TestOptionGroup ts2_ta2_tog5d = new TestOptionGroup();
                     ts2_ta2_tog5d.setName("Both");
                     ts2_ta2_tog5d.setOptions(Arrays.asList("Both"));
-            ts2_ta5.addOptionGroup(ts2_ta2_tog5a); ts2_ta5.addOptionGroup(ts2_ta2_tog5b); ts2_ta5.addOptionGroup(ts2_ta2_tog5c);
-            ts2_ta5.addOptionGroup(ts2_ta2_tog5d);
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5a);//none
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5b);//A
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5c);//B
+            ts2_ta5.addOptionGroup(ts2_ta2_tog5d);//both
         ts2.addAspect(ts2_ta5);
+
+
+            TestAspect ts2_ta5b = new TestAspect();
+            ts2_ta5b.setName("Medicaid Terms");
+            ts2_ta5b.setDescription("Has the member's medicaid coverage termed? If so, which? (None, Medicaid, BuyIn A, BuyIn B, Medicaid & BuyIn A, Medicaid & BuyIn B, BuyIn A & BuyIn B, All)");
+                TestOptionGroup ts2_ta2_tog5ba = new TestOptionGroup();
+                    ts2_ta2_tog5ba.setName("FALSE");
+                    ts2_ta2_tog5ba.setOptions(Arrays.asList("FALSE"));
+                TestOptionGroup ts2_ta2_tog5bb = new TestOptionGroup();
+                    ts2_ta2_tog5bb.setName("M");
+                    ts2_ta2_tog5bb.setOptions(Arrays.asList("M"));
+                TestOptionGroup ts2_ta2_tog5bc = new TestOptionGroup();
+                    ts2_ta2_tog5bc.setName("A");
+                    ts2_ta2_tog5bc.setOptions(Arrays.asList("A"));
+                TestOptionGroup ts2_ta2_tog5bd = new TestOptionGroup();
+                    ts2_ta2_tog5bd.setName("B");
+                    ts2_ta2_tog5bd.setOptions(Arrays.asList("B"));
+                TestOptionGroup ts2_ta2_tog5be = new TestOptionGroup();
+                    ts2_ta2_tog5be.setName("M & A");
+                    ts2_ta2_tog5be.setOptions(Arrays.asList("M & A"));
+                TestOptionGroup ts2_ta2_tog5bf = new TestOptionGroup();
+                    ts2_ta2_tog5bf.setName("M & B");
+                    ts2_ta2_tog5bf.setOptions(Arrays.asList("M & B"));
+                TestOptionGroup ts2_ta2_tog5bg = new TestOptionGroup();
+                    ts2_ta2_tog5bg.setName("A & B");
+                    ts2_ta2_tog5bg.setOptions(Arrays.asList("A & B"));
+                TestOptionGroup ts2_ta2_tog5bh = new TestOptionGroup();
+                    ts2_ta2_tog5bh.setName("All");
+                    ts2_ta2_tog5bh.setOptions(Arrays.asList("All"));
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5ba);//None
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bb);//Medicaid
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bc);//BuyIn A
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bd);//BuyIn B
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5be);//Medicaid & BuyIn A
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bf);//Medicaid BuyIn B
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bg);//BuyIn A & BuyIn B
+            ts2_ta5b.addOptionGroup(ts2_ta2_tog5bh);//all
+
+        ts2.addAspect(ts2_ta5b);
 
 
             TestAspect ts2_ta6 = new TestAspect();
@@ -433,8 +511,10 @@ public class TestCaseGeneratorMain {
                 TestOptionGroup ts2_ta2_tog6d = new TestOptionGroup();
                     ts2_ta2_tog6d.setName("No: B<A");
                     ts2_ta2_tog6d.setOptions(Arrays.asList("No: B<A"));
-            ts2_ta6.addOptionGroup(ts2_ta2_tog6a); ts2_ta6.addOptionGroup(ts2_ta2_tog6b); ts2_ta6.addOptionGroup(ts2_ta2_tog6c);
-            ts2_ta6.addOptionGroup(ts2_ta2_tog6d);
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6a);//yes
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6b);//n/a
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6c);//No A<B
+            ts2_ta6.addOptionGroup(ts2_ta2_tog6d);//No B<A
         ts2.addAspect(ts2_ta6);
 
 
@@ -450,7 +530,9 @@ public class TestCaseGeneratorMain {
                 TestOptionGroup ts2_ta2_tog7c = new TestOptionGroup();
                     ts2_ta2_tog7c.setName("Yes");
                     ts2_ta2_tog7c.setOptions(Arrays.asList("Yes"));
-            ts2_ta7.addOptionGroup(ts2_ta2_tog7a); ts2_ta7.addOptionGroup(ts2_ta2_tog7b); ts2_ta7.addOptionGroup(ts2_ta2_tog7c);
+            ts2_ta7.addOptionGroup(ts2_ta2_tog7a);//no
+            ts2_ta7.addOptionGroup(ts2_ta2_tog7b);//N/a
+            ts2_ta7.addOptionGroup(ts2_ta2_tog7c);//yes
         ts2.addAspect(ts2_ta7);
         
         return ts2;    } // end of hard coded method

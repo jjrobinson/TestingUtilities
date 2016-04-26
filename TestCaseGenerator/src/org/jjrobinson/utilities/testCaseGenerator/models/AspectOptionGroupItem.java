@@ -2,7 +2,7 @@
  * 
  * 
  */
-package com.boiseitoncall.utilities.testCaseGenerator.models;
+package org.jjrobinson.utilities.testCaseGenerator.models;
 
 import java.util.List;
 

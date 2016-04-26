@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boiseitoncall.utilities.testCaseGenerator.models;
+package org.jjrobinson.utilities.testCaseGenerator.models;
 
 
-import com.boiseitoncall.utilities.testCaseGenerator.TestCaseCalculator;
+import org.jjrobinson.utilities.testCaseGenerator.TestCaseCalculator;
 import java.util.ArrayList;
 import java.util.List;
 
