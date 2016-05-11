@@ -6,14 +6,17 @@ import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
 import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * Main entry point for running TestGenerator as a jar
@@ -32,28 +35,34 @@ public class TestCaseGeneratorMain {
      */
     public static void main(String[] args) {
         
-        /*
-        ArrayList<String> procedures = new ArrayList<String>();
-        ArrayList<String> plan_variations = new ArrayList<String>();
-        ArrayList<String> mmcp_participation_variations = new ArrayList<String>();
-        ArrayList<String> prior_auth_types = new ArrayList<String>();
-      */
-        printUsageCmdLine();
         boolean demo = false;
         boolean demo2 = false;
+        boolean demo3 = false;
         boolean ignoreGroups = false;
         boolean saveToFile = false;
         boolean silent = false;
         boolean foundArg = false;
+        boolean importData = false;
+        String importFile = null;
+        
         if (args != null) {
             for (String s : args) {
                 foundArg = false;//reset the foundArg flag
+                if (s.equalsIgnoreCase("-help")) {
+                    printUsageCmdLine();
+                    // EXIT FROM THE PROGRAM AFTER PRINTING USAGE STATEMENT
+                    System.exit(0); 
+                }
                 if (s.equalsIgnoreCase("-demo")) {
                     demo = true;
                     foundArg = true;
                 }
-                if (s.equalsIgnoreCase("-demo2")) {
+                if (!foundArg&& s.equalsIgnoreCase("-demo2")) {
                     demo2 = true;
+                    foundArg = true;
+                }
+                if (s.equalsIgnoreCase("-demo3")) {
+                    demo3 = true;
                     foundArg = true;
                 }
                 if (s.equalsIgnoreCase("-ignoreGroups")) {
@@ -68,21 +77,40 @@ public class TestCaseGeneratorMain {
                     silent = true;
                     foundArg = true;
                 }
+                if (s.contains("-import=")) {
+                    System.out.println("Found an IMPORT command: " + s);
+                    importData = true;
+                    silent=true;
+                    foundArg = true;
+                    importFile = s;
+                }
                 if (!s.isEmpty() && !foundArg) {
                     System.err.println("ERROR: Unknown command line argument: " + s);
                     System.exit(-1);
                 }
             }
-            if (demo) {
+            
+            if (!silent) printUsageCmdLine();//print usage if not in silent mode
+
+            if (importData) {
+                System.out.println("Importing data from file: " + importFile);
+                testSuite=getInputFromFile(importFile, ignoreGroups);
+            } else if (demo) {
                 //call to populate all info from hard coded lists for testing.
                 testSuite = callHardCodedVersion();
             } else if (demo2) {
                 //call to populate all info from hard coded lists for testing.
                 testSuite = callHardCodedVersion2();
+            } else if (demo3) {
+                //call to populate all info from hard coded lists for testing.
+                testSuite = callHardCodedVersion3();
             } else {
                 //Call to function to get all user input
-                testSuite = getInputCmdLine(ignoreGroups);
+                testSuite = getInputFromCmdLine(ignoreGroups);
             }
+        } else {//missing any command line arguments, print usage and exit
+            printUsageCmdLine();
+            System.exit(0);
         }
         
 
@@ -99,7 +127,46 @@ public class TestCaseGeneratorMain {
         }
         
     }//end main(Args)
+    
+    
+    public static String parseFileName(String in){
+        
+        
+        return "";
+    }
+    
+    
+    public static String parseArgToGetFileName(String s){
+        
+        return "";
+    }
+    
+    
+    
+    /**
+     * 
+     * @param in
+     * @param ignoreGroups
+     * @return 
+     */
+    public static TestSuite getInputFromFile(String in, boolean ignoreGroups){
+        TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
+        
+        String fileName = parseArgToGetFileName(in);
+        
+        try{
+            //fill in all the aspects
+            testSuite = BobTheBuilder.createTestSuiteFromFile(fileName, ignoreGroups);
+        }catch (Exception e) { e.printStackTrace();}
 
+        //List testCases = new ArrayList(ComputeTestCases(testSuite));
+
+        return testSuite;
+    }
+    
+    
+    
+    
     
     /**
      * Saves the contents of the test cases to csv format files
@@ -225,7 +292,7 @@ public class TestCaseGeneratorMain {
         }//end all test cases section
 
     }
-    
+
 
     /**
      *Prints a usage statement at the top of each run.
@@ -233,7 +300,9 @@ public class TestCaseGeneratorMain {
     public static void printUsageCmdLine(){
         StringBuilder sb = new StringBuilder();
         sb.append("TestCaseGenerator.jar:").append(NEW_LINE).append("USAGE:").append(NEW_LINE);
-        sb.append("Options:").append(NEW_LINE).append("\t\"-demo\": "
+        sb.append("Options:").append(NEW_LINE)
+                .append("\t\"-help\": exit after printing usage statement.")
+                .append(NEW_LINE).append("\t\"-demo\": "
                 + "hard coded 900 test case demo").append(NEW_LINE);
         sb.append("\t\"-demo2\": hard coded 24,576 test case demo. WARNING LARGE 1MB csv file").append(NEW_LINE);
         sb.append("\t\"-ignoreGroups\": turns off functional grouping for "
@@ -242,7 +311,9 @@ public class TestCaseGeneratorMain {
                 + "& AllTestCases to text files. Test Cases saved in .csv while"
                 + "TestSuite saved in JSON-esque format.").append(NEW_LINE);
         sb.append("\t\"-silent\": turns on silent printing, skipping all screen "
-                + "output after ingest").append(NEW_LINE).append(NEW_LINE);
+                + "output after ingest").append(NEW_LINE);
+        sb.append("\t\"-import=[file_name]\": skip all user input and take input from csv,")
+                .append(" and run in silent mode.").append(NEW_LINE).append(NEW_LINE);
         
         
         sb.append("Example: To test 2D CGI shapes we have 1) border color "
@@ -270,7 +341,7 @@ public class TestCaseGeneratorMain {
 	 * TestSuite object
      * @return TestSuite
      */
-    public static TestSuite getInputCmdLine(boolean ignoreGroups) {
+    public static TestSuite getInputFromCmdLine(boolean ignoreGroups) {
         TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
         //print out the command line headers
         try{
@@ -536,6 +607,90 @@ public class TestCaseGeneratorMain {
         ts2.addAspect(ts2_ta7);
         
         return ts2;    } // end of hard coded method
+
+
+
+    /**
+     * hard coded method to populate a TestSuite regarding COB Testing
+     * @return TestSuite ts
+     */
+    public static TestSuite callHardCodedVersion3() {
+
+
+        /*
+        Edits: 216, 252, 253, 311
+        COB: No, Yes
+        Date: < than 1yr, >= 1yr
+        Claim Type: T1015, everything else
+        TPL Matrix Over Ride Edit 216&252: Yes (Okay the claim, No (leave denied)
+        Medicare: No, A, B, Both A & B
+        Medicaid: Yes, No
+        Medicare Buy Ins: None, A, B, A & B
+
+        */
+        TestSuite ts = new TestSuite();
+        ts.setName("CCF10760B2");
+        ts.setDescription("COB Changes");
+        
+            TestAspect ta1 = new TestAspect();
+            ta1.setName("Edits Fired");
+                TestOptionGroup tog1 = new TestOptionGroup();
+                    tog1.setName("None");
+                    tog1.setOptions(Arrays.asList("None"));
+                TestOptionGroup tog2 = new TestOptionGroup();
+                    tog2.setName("216");
+                    tog2.addOption("216");
+                TestOptionGroup tog3 = new TestOptionGroup();
+                    tog3.setName("252");
+                    tog3.addOption("252");
+                TestOptionGroup tog4 = new TestOptionGroup();
+                    tog4.setName("253");
+                    tog4.addOption("253");
+                TestOptionGroup tog5 = new TestOptionGroup();
+                    tog5.setName("311");
+                    tog5.addOption("311");
+            ta1.addOptionGroup(tog1);
+            ta1.addOptionGroup(tog2);
+            ta1.addOptionGroup(tog3);
+            ta1.addOptionGroup(tog4);
+            ta1.addOptionGroup(tog5);
+        ts.addAspect(ta1);
+
+//            TestAspect ta2 = new TestAspect();
+//            ta2.setName("Rate Codes");
+//                TestOptionGroup tog3 = new TestOptionGroup();
+//                    tog3.setName("Secondary Rates");
+//                    tog3.setOptions(Arrays.asList("14", "15", "17"));
+//                TestOptionGroup tog4 = new TestOptionGroup();
+//                    tog4.setName("Primary Rates");
+//                    tog4.setOptions(Arrays.asList("41", "42", "43", "51", "52", "54", "56", "83", "85"));
+//            ta2.addOptionGroup(tog3);ta2.addOptionGroup(tog4);
+//        ts.addAspect(ta2);
+//
+//            TestAspect ta3 = new TestAspect();
+//            ta3.setName("MMCP Member Status");
+//                TestOptionGroup tog5 = new TestOptionGroup();
+//                    tog5.setName("Member Status");
+//                    tog5.setOptions(Arrays.asList("Non-Member", "Member", "Prospective"));
+//            ta3.addOptionGroup(tog5);
+//        ts.addAspect(ta3);
+//
+//            TestAspect ta4 = new TestAspect();
+//            ta4.setName("PA Status");
+//                TestOptionGroup tog6 = new TestOptionGroup();
+//                    tog6.setName("Current Dated");
+//                    tog6.setOptions(Arrays.asList("Current Dated - Single Procedure PA", "Current Dated - Multi-Procedure PA"));
+//                TestOptionGroup tog7 = new TestOptionGroup();
+//                    tog7.setName("Future Dated");
+//                    tog7.setOptions(Arrays.asList("Future Dated - Single Procedure PA", "Future Dated - Multi-Procedure PA"));
+//                TestOptionGroup tog8 = new TestOptionGroup();
+//                    tog8.setName("Not Found");
+//                    tog8.setOptions(Arrays.asList("Not Found"));
+//            ta4.addOptionGroup(tog6); ta4.addOptionGroup(tog7); ta4.addOptionGroup(tog8);
+//        ts.addAspect(ta4);
+//        
+        return ts;
+    } // end of hard coded method
     
     
 }//end class

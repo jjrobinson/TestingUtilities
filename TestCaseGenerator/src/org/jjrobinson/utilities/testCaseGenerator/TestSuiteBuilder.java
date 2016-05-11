@@ -19,6 +19,23 @@ public class TestSuiteBuilder {
     private String builderType;
     private TestSuite testSuite;
 
+
+    /**
+     * Call this method to create a new TestSuite via importing a CSV that 
+     * defines each test Aspect and their values
+     * 
+     * @param fileName
+     * @param ignoreGroups
+     * @return <code>TestSuite</code>
+     */
+    public TestSuite createTestSuiteFromFile(String fileName, boolean ignoreGroups)
+    {
+        TestSuite ts = new TestSuite();
+        
+        return ts;
+    }//end of importing TestSuite via command line argument fileName
+    
+    
     /**
      * The main method of this class (not to be confused with main(String args[]).
      * Call this method to create a new TestSuite via the command line.
