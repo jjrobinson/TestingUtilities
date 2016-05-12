@@ -6,17 +6,22 @@ import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
 import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 
 /**
  * Main entry point for running TestGenerator as a jar
@@ -35,86 +40,52 @@ public class TestCaseGeneratorMain {
      */
     public static void main(String[] args) {
         
-        boolean demo = false;
-        boolean demo2 = false;
-        boolean demo3 = false;
+        
+        Options options = setCmdLineOptions();//creating the CLI options object
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
+        try {
+            //try to parse the command line arguments
+            cmd = parser.parse(options, args);
+            
+        } catch (ParseException e){
+            System.err.println( "Parsing failed.  Reason: " + e.getMessage() );
+        }
+        
         boolean ignoreGroups = false;
         boolean saveToFile = false;
         boolean silent = false;
-        boolean foundArg = false;
-        boolean importData = false;
         String importFile = null;
-        
-        if (args != null) {
-            for (String s : args) {
-                foundArg = false;//reset the foundArg flag
-                if (s.equalsIgnoreCase("-help")) {
-                    printUsageCmdLine();
-                    // EXIT FROM THE PROGRAM AFTER PRINTING USAGE STATEMENT
-                    System.exit(0); 
-                }
-                if (s.equalsIgnoreCase("-demo")) {
-                    demo = true;
-                    foundArg = true;
-                }
-                if (!foundArg&& s.equalsIgnoreCase("-demo2")) {
-                    demo2 = true;
-                    foundArg = true;
-                }
-                if (s.equalsIgnoreCase("-demo3")) {
-                    demo3 = true;
-                    foundArg = true;
-                }
-                if (s.equalsIgnoreCase("-ignoreGroups")) {
-                    ignoreGroups = true;
-                    foundArg = true;
-                }
-                if (s.equalsIgnoreCase("-saveToFile")) {
-                    saveToFile = true;
-                    foundArg = true;
-                }
-                if (s.equalsIgnoreCase("-silent")) {
-                    silent = true;
-                    foundArg = true;
-                }
-                if (s.contains("-import=")) {
-                    System.out.println("Found an IMPORT command: " + s);
-                    importData = true;
-                    silent=true;
-                    foundArg = true;
-                    importFile = s;
-                }
-                if (!s.isEmpty() && !foundArg) {
-                    System.err.println("ERROR: Unknown command line argument: " + s);
-                    System.exit(-1);
-                }
-            }
+        boolean help = false;
+        if(cmd.hasOption("ignoreGroups")) ignoreGroups = true;
+        if (cmd.hasOption("silent")) silent = true;
+        if (cmd.hasOption("saveToFile")) saveToFile = true;
+
+        if (cmd.hasOption("help")) {
+            help = true;
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( "TestCaseGenerator", options );
+        } else if (cmd.hasOption("demo")) {
+            //call to populate all info from hard coded lists for testing.
+            testSuite = callHardCodedVersion();
+        } else if (cmd.hasOption("demo2")) {
+            //call to populate all info from hard coded lists for testing.
+            testSuite = callHardCodedVersion2();
+        } else if (cmd.hasOption("demo3")) {
+            //call to populate all info from hard coded lists for testing.
+            testSuite = callHardCodedVersion3();
+        } else if (cmd.hasOption("inputFile")) {
+            System.out.println("Importing data from file: " + importFile);
             
-            if (!silent) printUsageCmdLine();//print usage if not in silent mode
-
-            if (importData) {
-                System.out.println("Importing data from file: " + importFile);
-                testSuite=getInputFromFile(importFile, ignoreGroups);
-            } else if (demo) {
-                //call to populate all info from hard coded lists for testing.
-                testSuite = callHardCodedVersion();
-            } else if (demo2) {
-                //call to populate all info from hard coded lists for testing.
-                testSuite = callHardCodedVersion2();
-            } else if (demo3) {
-                //call to populate all info from hard coded lists for testing.
-                testSuite = callHardCodedVersion3();
-            } else {
-                //Call to function to get all user input
-                testSuite = getInputFromCmdLine(ignoreGroups);
-            }
-        } else {//missing any command line arguments, print usage and exit
-            printUsageCmdLine();
-            System.exit(0);
+            testSuite=getInputFromFile(importFile, ignoreGroups);
+        } else {
+            //Call to function to get all user input
+            testSuite = getInputFromCmdLine(ignoreGroups);
         }
+
         
 
-        if(!silent) {
+        if(!silent && !help) {
             System.out.println("TestSuite.toString(): ");
             System.out.println(testSuite.toString());
 
@@ -122,12 +93,45 @@ public class TestCaseGeneratorMain {
             printTestCasesCmdLine(testSuite);
         }//end non-silent print to screen
 
-        if(saveToFile){
+        if(saveToFile && !help){
             saveTestCasesToFile(testSuite);
         }
         
     }//end main(Args)
     
+
+    /**
+     * Sets the options that are available on the command line
+     * @return 
+     */
+    public static Options setCmdLineOptions(){
+        Options options = new Options();//Options object to be returned
+        options.addOption("h", "help", false, "print this usage statement");
+        options.addOption("d", "demo", false, 
+                "generate a hard coded 900 test case demo");
+        options.addOption("d2", "demo2", false, 
+                "generate a hard coded 24,576 test case demo. WARNING LARGE 1MB"
+                        + " csv file");
+        options.addOption("d3", "demo3", false, 
+                "generate a hard coded small test case demo");
+        options.addOption("ig", "ignoreGroups", false, 
+                "turns off functional grouping for simple input");
+        options.addOption("s", "silent", false, 
+                "turns on silent mode, skipping all screen output possible");
+        options.addOption("f", "saveToFile", false, 
+                "turns on saving TestSuite, Smart TestCases, & All TestCases to "
+                        + "text files. Test Cases saved in .csv while TestSuite"
+                        + " saved in JSON-esque format.");
+        options.addOption(Option.builder("i")
+                .longOpt( "inputFile" )
+                .desc( "import TestSuite from given CSV file FILE_NAME" )
+                .hasArg()
+                .argName("FILE_NAME").build());
+        return options;
+    }
+
+
+
     
     public static String parseFileName(String in){
         
