@@ -27,12 +27,15 @@ import org.apache.commons.cli.ParseException;
  * @author robinso3
  */
 public class TestCaseGeneratorMain {
-
+    
     /**
      * The TestSuite object for the static main(String args[])
      */
     static TestSuite testSuite;
     private static final String NEW_LINE = System.getProperty("line.separator");
+    static boolean ignoreGroups = false;
+    static boolean silent = false;
+    static boolean saveToFile = false;
 
     /**
      * @param args the command line arguments
@@ -54,9 +57,6 @@ public class TestCaseGeneratorMain {
             printExampleCmdLine();
         }
         
-        boolean ignoreGroups = false;
-        boolean saveToFile = false;
-        boolean silent = false;
         boolean help = false;
         if(cmd.hasOption("ignoreGroups")) ignoreGroups = true;
         if (cmd.hasOption("silent")) silent = true;
@@ -75,10 +75,13 @@ public class TestCaseGeneratorMain {
             testSuite=getInputFromFile(importFile, ignoreGroups, silent);
         } else if (cmd.hasOption("demo")) {
             ignoreGroups = true;
+            saveToFile = true;//default to write to file
             //call to populate all info from hard coded lists for testing.
             testSuite = callHardCodedVersion();
         } else if (cmd.hasOption("demo2")) {
             ignoreGroups = true;
+            silent = true;//default to silent since this demo output is too large
+            saveToFile = true;//default to write to file
             //call to populate all info from hard coded lists for testing.
             testSuite = callHardCodedVersion2();
         } else if (cmd.hasOption("demo3")) {
