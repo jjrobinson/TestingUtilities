@@ -5,8 +5,8 @@ import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
 import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import javax.management.RuntimeErrorException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,7 +28,7 @@ public class TestSuiteBuilder {
      * @param ignoreGroups
      * @return <code>TestSuite</code>
      */
-    public TestSuite createTestSuiteFromFile(String fileName, boolean ignoreGroups)
+    public TestSuite createTestSuiteFromFile(File fileName, boolean ignoreGroups)
     {
         TestSuite ts = new TestSuite();
         
