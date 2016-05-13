@@ -10,6 +10,11 @@
 <project name="TestCaseGenerator" default="BuildRelease" basedir="."  >
     <description>Builds, tests, and runs the project TestCaseGenerator.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+    
+    <property name="source.dir" location="src"/>
+    <property name="doc.dir" location="doc"/>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -87,7 +92,7 @@
     </target>
 
 
-    <target name="BuildRelease" depends="jar">
+    <target name="buildRelease" depends="jar">
         <property name="release.jar.name" value="TestCaseGenerator"/>
         <property name="release.dir" value="release"/>
         <property name="release.jar" value="${release.dir}/${release.jar.name}.jar"/>
@@ -109,7 +114,10 @@
         <delete file="${release.dir}/temp_file.jar"/>
     </target>
 
-
+    <!-- Generate javadocs for current project into ${doc.dir} -->
+    <target name="javaDoc" depends="buildRelease" description="generate documentation">
+        <javadoc sourcepath="${source.dir}" destdir="${doc.dir}"/>
+    </target>
     
     
 </project>

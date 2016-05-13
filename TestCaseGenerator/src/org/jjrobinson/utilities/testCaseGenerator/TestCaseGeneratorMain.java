@@ -71,8 +71,8 @@ public class TestCaseGeneratorMain {
         } else if (cmd.hasOption("inputFile")) {
             String importFile = cmd.getOptionValue("f");
             System.out.println("Importing data from file: " + importFile);
-            
-            testSuite=getInputFromFile(importFile, ignoreGroups, silent);
+
+            testSuite=getInputFromCSVFile(importFile);
         } else if (cmd.hasOption("demo")) {
             ignoreGroups = true;
             saveToFile = true;//default to write to file
@@ -141,61 +141,6 @@ public class TestCaseGeneratorMain {
     }
 
 
-
-    
-    public static String parseFileName(String in){
-        
-        
-        return "";
-    }
-    
-    /**
-     * Checks the string provided as an arg. If it exists, creates File obj
-     * 
-     * @param s
-     * @return file
-     */
-    public static File parseArgToGetFileName(String s){
-        try{
-            File f = new File(s);
-            if (f.canRead()){
-                System.out.println("Found File: "+f.toString());
-                return f;
-            } else {
-                System.err.println("ERROR: Could not open file named: "+s);
-                System.exit(-1);
-            }
-                
-        } catch (Exception e){
-            System.err.println("ERROR: Could not open file named: "+s);
-            System.exit(-1);
-        }
-        return null;
-    }
-    
-    
-    
-    /**
-     * Imports the TestSuite from a CSV file, each column is a TestAspect
-     * @param in
-     * @param ignoreGroups
-     * @param silent
-     * @return 
-     */
-    public static TestSuite getInputFromFile(String in, boolean ignoreGroups, boolean silent){
-        TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
-        
-        File inputFile = parseArgToGetFileName(in);        
-
-        //fill in all the aspects
-        testSuite = BobTheBuilder.createTestSuiteFromFile(inputFile, ignoreGroups);
-
-        return testSuite;
-    }
-    
-    
-    
-    
     
     /**
      * Saves the contents of the test cases to csv format files
@@ -326,7 +271,7 @@ public class TestCaseGeneratorMain {
     /**
      *Prints a usage statement at the top of each run.
      */
-    public static void printExampleCmdLine(){
+    private static void printExampleCmdLine(){
         StringBuilder sb = new StringBuilder();
         sb.append(NEW_LINE);
         sb.append("Example: To test 2D CGI shapes we have 1) border color "
@@ -347,11 +292,11 @@ public class TestCaseGeneratorMain {
     }
     
     
-    
+
     /**
-     * Prompts user for all input.  Once input has been completed and the user 
-	 * tells the program to "generate".  Then the method returns a completed
-	 * TestSuite object
+     * Calls the <code>TestSuiteBuilder</code> with the command line interface method.
+     * Once input has been completed this method returns a completed TestSuite object
+     * 
      * @return TestSuite
      */
     public static TestSuite getInputFromCmdLine(boolean ignoreGroups) {
@@ -366,6 +311,43 @@ public class TestCaseGeneratorMain {
 
         //List testCases = new ArrayList(ComputeTestCases(testSuite));
 
+        return testSuite;
+    } // end input method
+    
+
+    
+
+    /**
+     * Calls the <code>TestSuiteBuilder</code> with the csv import interface method.
+     * Once input has been completed this method returns a completed TestSuite object
+     * 
+     * @return TestSuite
+     */
+    public static TestSuite getInputFromCSVFile(String s) {
+        TestSuiteBuilder BobTheBuilder = new TestSuiteBuilder();
+        TestSuite testSuite = null;//initialize
+        try{
+            File f = new File(s);
+            if (f.canRead()){
+                System.out.println("Found File: "+f.toString());
+                
+                //print out the command line headers
+                BobTheBuilder.displayBannerCmdLine();
+                
+                //fill in all the aspects
+                testSuite = BobTheBuilder.createTestSuiteCSVFile(f, silent, ignoreGroups);
+            } else {
+                System.err.println("ERROR: Could not open file named: "+s);
+                System.exit(-1);
+            }
+                
+        } catch (IOException e){
+            System.err.println("ERROR: Could not open file named: "+s);
+            System.exit(-1);
+        } catch (Exception e){
+            System.err.println("ERROR: UI interaction error");
+            System.exit(-1);
+        }
         return testSuite;
     } // end input method
     
