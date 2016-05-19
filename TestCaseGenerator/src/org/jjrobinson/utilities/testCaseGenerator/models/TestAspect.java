@@ -1,7 +1,7 @@
 /*
  * Test Aspect object contains a name, and a list of Test Options.  Options are grouped into functional groups.
  */
-package com.boiseitoncall.utilities.testCaseGenerator.models;
+package org.jjrobinson.utilities.testCaseGenerator.models;
 
 import java.util.ArrayList;
 import java.util.List;

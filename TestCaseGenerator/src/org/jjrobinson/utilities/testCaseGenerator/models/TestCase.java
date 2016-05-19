@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.boiseitoncall.utilities.testCaseGenerator.models;
+package org.jjrobinson.utilities.testCaseGenerator.models;
 
 import java.util.ArrayList;
 import java.util.List;

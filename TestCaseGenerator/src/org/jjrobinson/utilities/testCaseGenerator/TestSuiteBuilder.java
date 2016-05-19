@@ -1,12 +1,12 @@
-package com.boiseitoncall.utilities.testCaseGenerator;
+package org.jjrobinson.utilities.testCaseGenerator;
 
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestAspect;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestOptionGroup;
-import com.boiseitoncall.utilities.testCaseGenerator.models.TestSuite;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestAspect;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestOptionGroup;
+import org.jjrobinson.utilities.testCaseGenerator.models.TestSuite;
 import com.github.lalyos.jfiglet.FigletFont;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import javax.management.RuntimeErrorException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +18,26 @@ import org.apache.commons.lang3.StringUtils;
 public class TestSuiteBuilder {
     private String builderType;
     private TestSuite testSuite;
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
+    /**
+     * Call this method to create a new TestSuite via importing a CSV that 
+     * defines each test Aspect and their values
+     * 
+     * @param fileName <code>File</code>
+     * @param silent <code>boolean</code>
+     * @param ignoreGroups <code>boolean</code>
+     * @return <code>TestSuite</code>
+     */
+    public TestSuite createTestSuiteCSVFile(File fileName, 
+            boolean silent, boolean ignoreGroups)
+    {
+        TestSuite ts = new TestSuite();
+        
+        return ts;
+    }//end of importing TestSuite via command line argument fileName
+
+    
     /**
      * The main method of this class (not to be confused with main(String args[]).
      * Call this method to create a new TestSuite via the command line.
