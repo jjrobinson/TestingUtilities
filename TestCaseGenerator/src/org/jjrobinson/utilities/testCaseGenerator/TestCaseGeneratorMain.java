@@ -73,7 +73,7 @@ public class TestCaseGeneratorMain {
             System.out.println("Importing data from file: " + importFile);
 
             testSuite=getInputFromCSVFile(importFile);
-        } else if (cmd.hasOption("demo")) {
+        } else if (cmd.hasOption("demo1")) {
             ignoreGroups = true;
             saveToFile = true;//default to write to file
             //call to populate all info from hard coded lists for testing.
@@ -117,7 +117,7 @@ public class TestCaseGeneratorMain {
     public static Options setCmdLineOptions(){
         Options options = new Options();//Options object to be returned
         options.addOption("h", "help", false, "print this usage statement then exit");
-        options.addOption("d", "demo", false, 
+        options.addOption("d1", "demo1", false, 
                 "generate a hard coded 900 test case demo, setting ignoreGroups");
         options.addOption("d2", "demo2", false, 
                 "generate a hard coded 24,576 test case demo, setting "
@@ -132,9 +132,9 @@ public class TestCaseGeneratorMain {
                 "turns on saving TestSuite, Smart TestCases, & All TestCases to "
                         + "text files. Test Cases saved in .csv while TestSuite"
                         + " saved in JSON-esque format.");
-        options.addOption(Option.builder("f")
-                .longOpt( "inputFile" )
-                .desc( "import TestSuite from given CSV file FILE_NAME" )
+        options.addOption(Option.builder("r")
+                .longOpt( "readFromFile" )
+                .desc( "read TestSuite from given CSV file FILE_NAME" )
                 .hasArg()
                 .argName("FILE_NAME").build());
         return options;
